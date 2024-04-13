@@ -56,6 +56,31 @@ bool initWindow(HINSTANCE hInstance, int nCmdShow) {
 	//ShowWindow(hwnd, nCmdShow);
 	return true;
 }
+/// <param name="shader">Shader to querry for errors</param>
+/// <returns>0 if fails. Return value obtained from glGetShaderiv</returns>
+GLint queryShaderErrors(GLuint shader) {
+	GLint success;
+	char infoLog[512];
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+	
+	if (!success) {
+		glGetShaderInfoLog(shader, 512, NULL, infoLog);
+		printf("SHADER ERROR:%s\n", infoLog);
+	}
+	return success; 
+}
+GLint queryProgramErrors(GLuint program) {
+	GLint success;
+	char infoLog[512];
+	glGetShaderiv(program, GL_COMPILE_STATUS, &success);
+
+	if (!success) {
+		glGetProgramInfoLog(program, 512, NULL, infoLog);
+		printf("PROGRAM ERROR:%s\n", infoLog);
+	}
+	return success;
+}
+
 bool initOpenGL(int nCmdShow) {
 	PIXELFORMATDESCRIPTOR pfd;
 	int pFormat;
@@ -90,6 +115,59 @@ bool initOpenGL(int nCmdShow) {
 	glClear(GL_COLOR_BUFFER_BIT);
 	SwapBuffers(dc);
 	ShowWindow(hwnd, nCmdShow);
+
+	float vertices[]{
+		-0.5f, -0.5f,  0.0f,
+		 0.0f,  0.5f,  0.0f,
+		 0.5f, -0.5f,  0.0f
+	};
+	GLuint vertexBuffer;
+	GLuint vertexArray;
+	glGenVertexArrays(1, &vertexArray);
+	glBindVertexArray(vertexArray); 
+	glGenBuffers(1, &vertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); 
+	glEnableVertexAttribArray(0); 
+
+	const char* vertexShaderSource =
+		"#version 330 core\n"
+		"layout (location = 0) in vec3 aPos;\n"
+		"void main() {\n"
+		"  gl_Position = vec4(aPos, 1.0);\n"
+		"}";
+	const char* fragmentShaderSource =
+		"#version 330 core\n"
+		"out vec4 FragColor;\n"
+		"void main() {\n"
+		"  FragColor = vec4(0.88, 0.56, 0.19, 1.0);\n"
+		"}";
+	GLuint vertexShader, fragmentShader, shaderProgram;
+	vertexShader   = glCreateShader(GL_VERTEX_SHADER);
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	shaderProgram  = glCreateProgram();
+	if (!vertexShader || !fragmentShader || !shaderProgram) return false;
+
+	glShaderSource(vertexShader  , 1, &vertexShaderSource  , NULL);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glCompileShader(vertexShader);
+	glCompileShader(fragmentShader); 
+	GLint vertexShaderSuccess   = queryShaderErrors(vertexShader);
+	GLint fragmentShaderSuccess = queryShaderErrors(fragmentShader);
+	if (!vertexShaderSuccess || !fragmentShaderSuccess) return false;
+
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+
+	glLinkProgram(shaderProgram);
+	queryProgramErrors(shaderProgram);
+
+	glUseProgram(shaderProgram);
+
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
 
 	return true;
 }

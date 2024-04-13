@@ -11,6 +11,11 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		windowHeight = HIWORD(lParam);
 		glViewport(0, 0, windowWidth, windowHeight);
 		return 0;
+	case WM_KEYDOWN:
+		if (wParam == VK_ESCAPE) {
+			PostQuitMessage(0);
+		}
+		return 0;
 	}
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
