@@ -4,31 +4,21 @@
 
 #include "GlobalVariables.hpp"
 #include "Init.hpp"
+#include "Render.hpp"
 
-void closeApp();
+inline void closeApp() {
+	FreeConsole();
+	wglMakeCurrent(NULL, NULL);
+	wglDeleteContext(glrc);
+	ReleaseDC(hwnd, dc);
+}
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
 	if (!initAll(hInstance, nCmdShow)) { return -1; }
-
-	MSG msg = {};
 	while (true) {
-		if (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE)) {
-			if (msg.message == WM_QUIT) break;
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-		glClear(GL_COLOR_BUFFER_BIT);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		SwapBuffers(dc);
+		if(processEvents()) break;
+		render();
 	}
 	closeApp();
 	return 0;  
-}
-
-
-void closeApp() {
- 	FreeConsole();
-	wglMakeCurrent(NULL, NULL);
-	wglDeleteContext(glrc);
-	ReleaseDC(hwnd, dc); 
 }

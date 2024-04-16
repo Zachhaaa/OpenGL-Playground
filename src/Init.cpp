@@ -115,10 +115,48 @@ bool initOpenGL(int nCmdShow) {
 	SwapBuffers(dc);
 	ShowWindow(hwnd, nCmdShow);
 
-	float vertices[]{
-		-0.5f, -0.5,  0.0f,
-		 0.0f,  0.5f, 0.0f,
-		 0.5f, -0.5f, 0.0f
+	float vertices[] = {
+		-0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+
+		-0.5f, -0.5f,  0.5f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
+
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+
+		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+
+		-0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f, -0.5f,
+
+		-0.5f,  0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f,
 	};
 	GLuint vertexBuffer;
 	GLuint vertexArray;
@@ -134,8 +172,9 @@ bool initOpenGL(int nCmdShow) {
 	const char* vertexShaderSource =
 		"#version 330 core\n"
 		"layout (location = 0) in vec3 aPos;\n"
+		"uniform mat4 u_Model, u_View, u_Proj;\n"
 		"void main() {\n"
-		"  gl_Position = vec4(aPos, 1.0);\n"
+		"  gl_Position = u_Proj * u_View * u_Model * vec4(aPos, 1.0);\n"
 		"}";
 	const char* fragmentShaderSource =
 		"#version 330 core\n"
@@ -168,11 +207,21 @@ bool initOpenGL(int nCmdShow) {
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
+	u_Model = glGetUniformLocation(shaderProgram, "u_Model");
+	u_View  = glGetUniformLocation(shaderProgram, "u_View");
+	u_Proj  = glGetUniformLocation(shaderProgram, "u_Proj");
+	if (u_Model == -1 || u_View == -1 || u_Proj == -1) {
+		printf("ERROR finding uniform location\n");
+		return false;
+	}
+	proj = glm::perspective(glm::radians(c_DefFov), (float)windowWidth/windowHeight, c_NearClip, c_FarClip);
+	glUniformMatrix4fv(u_Proj, 1, GL_FALSE, &proj[0][0]);
+
 	return true;
 }
 
 bool initAll(HINSTANCE hInstance, int nCmdShow) {
-	appStartTime = GetTickCount64();
+	appStartTime = previousTime = GetTickCount64();
 	initConsole();
 	if (!initWindow(hInstance, nCmdShow)) return false;
 	if (!initOpenGL(nCmdShow)) return false;
