@@ -1,0 +1,6 @@
+Fix the resize bug:
+  - Prevent crash when window height = 0 due to divsion in glm::perspective aspect ratio parameter (set minimum window size)
+  - Make the resize actually look normal and not change the shape of the cube.
+ 
+Add player look around movement (control with middle mouse)
+  - Also make it so the player movment is aligned with the direction the character is looking.
