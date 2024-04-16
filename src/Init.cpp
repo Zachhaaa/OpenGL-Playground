@@ -4,7 +4,7 @@
 void initConsole() {
 	AllocConsole();
 
-	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetStdHandle(STD_INPUT_HANDLE, consoleHandle);
 	SetStdHandle(STD_OUTPUT_HANDLE, consoleHandle);
 	SetStdHandle(STD_ERROR_HANDLE, consoleHandle);
@@ -53,7 +53,6 @@ bool initWindow(HINSTANCE hInstance, int nCmdShow) {
 
 	if (hwnd == NULL) { return false; }
 
-	//ShowWindow(hwnd, nCmdShow);
 	return true;
 }
 /// <param name="shader">Shader to querry for errors</param>
@@ -72,7 +71,7 @@ GLint queryShaderErrors(GLuint shader) {
 GLint queryProgramErrors(GLuint program) {
 	GLint success;
 	char infoLog[512];
-	glGetShaderiv(program, GL_COMPILE_STATUS, &success);
+	glGetProgramiv(program, GL_LINK_STATUS, &success);
 
 	if (!success) {
 		glGetProgramInfoLog(program, 512, NULL, infoLog);
@@ -117,9 +116,9 @@ bool initOpenGL(int nCmdShow) {
 	ShowWindow(hwnd, nCmdShow);
 
 	float vertices[]{
-		-0.5f, -0.5f,  0.0f,
-		 0.0f,  0.5f,  0.0f,
-		 0.5f, -0.5f,  0.0f
+		-0.5f, -0.5,  0.0f,
+		 0.0f,  0.5f, 0.0f,
+		 0.5f, -0.5f, 0.0f
 	};
 	GLuint vertexBuffer;
 	GLuint vertexArray;
@@ -173,6 +172,7 @@ bool initOpenGL(int nCmdShow) {
 }
 
 bool initAll(HINSTANCE hInstance, int nCmdShow) {
+	appStartTime = GetTickCount64();
 	initConsole();
 	if (!initWindow(hInstance, nCmdShow)) return false;
 	if (!initOpenGL(nCmdShow)) return false;

@@ -11,20 +11,23 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	if (!initAll(hInstance, nCmdShow)) { return -1; }
 
 	MSG msg = {};
-	while (GetMessage(&msg, NULL, 0, 0)) {
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+	while (true) {
+		if (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE)) {
+			if (msg.message == WM_QUIT) break;
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 		glClear(GL_COLOR_BUFFER_BIT);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		SwapBuffers(dc);
 	}
 	closeApp();
-
 	return 0;  
 }
 
+
 void closeApp() {
-	FreeConsole();
+ 	FreeConsole();
 	wglMakeCurrent(NULL, NULL);
 	wglDeleteContext(glrc);
 	ReleaseDC(hwnd, dc); 

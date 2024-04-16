@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Windows.h>
+#include <dwmapi.h>
 
 #include <glad/glad.h>
 
@@ -12,8 +13,8 @@
 constexpr unsigned
 c_WindowStartPosX = 200,
 c_WindowStartPosY = 200,
-c_WindowStartWidth = 900,
-c_WindowStartHeight = 700;
+c_WindowStartWidth = 1000,
+c_WindowStartHeight = 800;
 
 
 /// <summary>
@@ -21,7 +22,14 @@ c_WindowStartHeight = 700;
 /// </summary>
 extern unsigned windowWidth, windowHeight;
 
+// General global variables:
+extern ULONGLONG appStartTime;
+extern float rotateMat[3][3];
+
 // win32 global variables:
 extern HWND hwnd;
 extern HDC dc;
 extern HGLRC glrc;
+extern HANDLE consoleHandle;
+
+// OpenGL global variables;
