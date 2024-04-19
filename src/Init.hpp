@@ -5,9 +5,11 @@
 
 #include <cstdio>
 
-
-
 #include "Events.hpp"
+
+typedef BOOL (WINAPI* WGLSWAPINTERVALEXT)(int);
+extern BOOL (WINAPI* wglSwapIntervalEXT)(int);
+
 
 void initConsole();
 float getInitMonitorScale();

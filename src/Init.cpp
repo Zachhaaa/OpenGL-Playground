@@ -1,6 +1,8 @@
 #include "GlobalVariables.hpp"
 #include "init.hpp"
 
+BOOL (WINAPI* wglSwapIntervalEXT)(int);
+
 void initConsole() {
 	AllocConsole();
 
@@ -34,12 +36,15 @@ bool initWindow(HINSTANCE hInstance, int nCmdShow) {
 	RegisterClass(&wc);
 
 	float scale = getInitMonitorScale();
-	windowWidth = (unsigned)(c_WindowStartWidth * scale);
-	windowHeight = (unsigned)(c_WindowStartHeight * scale);
+	windowWidth     = (unsigned)(c_WindowStartWidth  * scale);
+	windowHeight    = (unsigned)(c_WindowStartHeight * scale);
+	windowMinWidth  = (unsigned)(c_WindowMinWidth    * scale);
+	windowMinHeight = (unsigned)(c_WindowMinHeight   * scale);
+
 	hwnd = CreateWindowEx(
 		0,
 		CLASS_NAME,
-		L"Learn to Program Windows",
+		L"Win32OpenGL",
 		WS_OVERLAPPEDWINDOW,
 		int(c_WindowStartPosX * scale),
 		int(c_WindowStartPosY * scale),
@@ -52,6 +57,8 @@ bool initWindow(HINSTANCE hInstance, int nCmdShow) {
 	);
 
 	if (hwnd == NULL) { return false; }
+
+	SetCapture(hwnd);
 
 	return true;
 }
@@ -109,6 +116,8 @@ bool initOpenGL(int nCmdShow) {
 	wglMakeCurrent(dc, glrc);
 
 	if (!gladLoadGL()) return false;
+
+	wglSwapIntervalEXT = (WGLSWAPINTERVALEXT)wglGetProcAddress("wglSwapIntervalEXT");
 
 	glClearColor(CLEAR_COLOR_PARAM);
 	glClear(GL_COLOR_BUFFER_BIT);
