@@ -10,7 +10,6 @@
 typedef BOOL (WINAPI* WGLSWAPINTERVALEXT)(int);
 extern BOOL (WINAPI* wglSwapIntervalEXT)(int);
 
-
 void initConsole();
 float getInitMonitorScale();
 bool initWindow(HINSTANCE hInstance, int nCmdShow);

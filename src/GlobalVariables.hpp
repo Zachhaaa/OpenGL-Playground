@@ -41,7 +41,7 @@ c_WindowMinHeight   = 200;
 constexpr int c_SwapInterval = -1;
 
 // Control constants
-constexpr float c_MoveSensitivity  = 0.0035f;
+constexpr float c_MoveSensitivity  = 0.0025f;
 constexpr float c_MouseSensitivity = 0.002f;
 
 constexpr float

@@ -58,7 +58,7 @@ bool initWindow(HINSTANCE hInstance, int nCmdShow) {
 
 	if (hwnd == NULL) { return false; }
 
-	SetCapture(hwnd);
+	SetCursor(LoadCursor(NULL, IDC_ARROW));
 
 	return true;
 }
@@ -120,7 +120,8 @@ bool initOpenGL(int nCmdShow) {
 	wglSwapIntervalEXT = (WGLSWAPINTERVALEXT)wglGetProcAddress("wglSwapIntervalEXT");
 
 	glClearColor(CLEAR_COLOR_PARAM);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	SwapBuffers(dc);
 	ShowWindow(hwnd, nCmdShow);
 
