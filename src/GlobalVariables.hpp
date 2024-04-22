@@ -64,6 +64,9 @@ c_DefFov = 45.0f, // Default FOV (degrees)
 c_NearClip = 0.1f,
 c_FarClip = 100.0f;
 
+// Scene Constants
+constexpr pug::vec3f lightCol = { 1.0f,  1.0f,  1.0f  };
+constexpr pug::vec3f objCol   = { 0.95f, 0.42f, 0.21f };
 /// <summary>
 /// Determined and calculated
 /// </summary>
@@ -95,5 +98,5 @@ extern bool windowFocus;
 // OpenGL global variables;
 extern GLuint objProg, lightProg;
 extern GLint
-u_ObjModel, u_ObjView, u_ObjProj,
-u_LightModel, u_LightView, u_LightProj;
+u_ObjModel, u_ObjView, u_ObjProj, u_ObjObjCol, u_ObjLightCol,
+u_LightModel, u_LightView, u_LightProj, u_LightLightCol;

@@ -25,6 +25,6 @@ bool windowFocus = true;
 
 // OpenGL global variables"
 GLuint objProg, lightProg;
-GLint 
-u_ObjModel,   u_ObjView,   u_ObjProj,
-u_LightModel, u_LightView, u_LightProj;
+GLint
+u_ObjModel, u_ObjView, u_ObjProj, u_ObjObjCol, u_ObjLightCol,
+u_LightModel, u_LightView, u_LightProj, u_LightLightCol;

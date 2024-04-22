@@ -202,8 +202,12 @@ bool initOpenGL(int nCmdShow) {
 	const char* objFragShadSrc =
 		"#version 330 core\n"
 		"out vec4 FragColor;\n"
+		"\n"
+		"uniform vec3 u_ObjCol;\n"
+		"uniform vec3 u_LightCol;\n"
+		"\n"
 		"void main() {\n"
-		"  FragColor = vec4(0.95, 0.42, 0.21, 1.0);\n"
+		"  FragColor = vec4(u_ObjCol * u_LightCol, 1.0);\n"
 		"}";
 	const char* lightVertShadSrc =
 		"#version 330 core\n"
@@ -215,8 +219,11 @@ bool initOpenGL(int nCmdShow) {
 	const char* lightFragShadSrc =
 		"#version 330 core\n"
 		"out vec4 lightColor;\n"
+		"\n"
+		"uniform vec3 u_LightCol;\n"
+		"\n"
 		"void main() {\n"
-		"  lightColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);\n"
+		"  lightColor = vec4(u_LightCol, 1.0f);\n"
 		"}\n";
 	GLuint objVertShad, objFragShad, lightVertShad, lightFragShad;
 	objVertShad   = GL_ERROR(glCreateShader(GL_VERTEX_SHADER));
@@ -281,18 +288,24 @@ bool initOpenGL(int nCmdShow) {
 	GL_ERROR(glDeleteShader(lightFragShad));
 	GL_ERROR(glDeleteShader(lightFragShad));
 
-	u_ObjModel   = GL_ERROR(glGetUniformLocation(objProg,   "u_Model"));
-	u_ObjView    = GL_ERROR(glGetUniformLocation(objProg,   "u_View"));
-	u_ObjProj    = GL_ERROR(glGetUniformLocation(objProg,   "u_Proj"));
-	u_LightModel = GL_ERROR(glGetUniformLocation(lightProg, "u_Model"));
-	u_LightView  = GL_ERROR(glGetUniformLocation(lightProg, "u_View"));
-	u_LightProj  = GL_ERROR(glGetUniformLocation(lightProg, "u_Proj"));
-	if (u_ObjModel   == -1 ||
-		u_ObjView    == -1 || 
-		u_ObjProj    == -1 ||
-		u_LightModel == -1 ||
-		u_LightView	 == -1 ||
-		u_LightProj	 == -1 
+	u_ObjModel      = GL_ERROR(glGetUniformLocation(objProg,   "u_Model"));
+	u_ObjView       = GL_ERROR(glGetUniformLocation(objProg,   "u_View"));
+	u_ObjProj       = GL_ERROR(glGetUniformLocation(objProg,   "u_Proj"));
+	u_ObjObjCol     = GL_ERROR(glGetUniformLocation(objProg,   "u_ObjCol"));
+	u_ObjLightCol   = GL_ERROR(glGetUniformLocation(objProg,   "u_LightCol"));
+	u_LightModel    = GL_ERROR(glGetUniformLocation(lightProg, "u_Model"));
+	u_LightView     = GL_ERROR(glGetUniformLocation(lightProg, "u_View"));
+	u_LightProj     = GL_ERROR(glGetUniformLocation(lightProg, "u_Proj"));
+	u_LightLightCol = GL_ERROR(glGetUniformLocation(lightProg, "u_LightCol"));
+	if (u_ObjModel	    == -1 ||
+		u_ObjView	    == -1 ||
+		u_ObjProj	    == -1 ||
+		u_ObjObjCol	    == -1 ||
+		u_ObjLightCol   == -1 ||
+		u_LightModel    == -1 ||
+		u_LightView	    == -1 ||
+		u_LightProj	    == -1 ||
+		u_LightLightCol == -1 
 		) {
 		DEBUG_ONLY(printf("ERROR finding uniform location\n"); __debugbreak());
 		return false;
@@ -301,9 +314,12 @@ bool initOpenGL(int nCmdShow) {
 
 	GL_ERROR(glUseProgram(objProg);)
 	GL_ERROR(glUniformMatrix4fv(u_ObjProj,   1, GL_FALSE, &proj[0][0]));
+	GL_ERROR(glUniform3f(u_ObjObjCol,   objCol.x,   objCol.y,   objCol.z));
+	GL_ERROR(glUniform3f(u_ObjLightCol, lightCol.x, lightCol.y, lightCol.z));
 
 	GL_ERROR(glUseProgram(lightProg);)
 	GL_ERROR(glUniformMatrix4fv(u_LightProj, 1, GL_FALSE, &proj[0][0]));
+	GL_ERROR(glUniform3f(u_LightLightCol, lightCol.x, lightCol.y, lightCol.z));
 
 	ShowWindow(hwnd, nCmdShow);
 
