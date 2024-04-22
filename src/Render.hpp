@@ -6,13 +6,23 @@
 #include "GlobalVariables.hpp"
 
 inline void render() {
-	model = glm::mat4(1.0f);
-	view  = glm::eulerAngleXY(camAng.x, camAng.y);
-	view  = glm::translate(view, camPos);
-	glUniformMatrix4fv(u_Model, 1, GL_FALSE, &model[0][0]);
-	glUniformMatrix4fv(u_View, 1, GL_FALSE, &view[0][0]);
+	using namespace glm;
+	GL_ERROR(glUseProgram(objProg));
 
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	model = mat4(1.0f);
+	view  = eulerAngleXY(camAng.x, camAng.y);
+	view  = translate(view, camPos);
+	GL_ERROR(glUniformMatrix4fv(u_ObjModel, 1, GL_FALSE, &model[0][0]));
+	GL_ERROR(glUniformMatrix4fv(u_ObjView,  1, GL_FALSE, &view[0][0]));
+	GL_ERROR(glDrawArrays(GL_TRIANGLES, 0, 36));
+
+	GL_ERROR(glUseProgram(lightProg));
+	
+	model = translate(mat4(1.0f), vec3(1.0f, 0.75f, -2.0f));
+	GL_ERROR(glUniformMatrix4fv(u_LightModel, 1, GL_FALSE, &model[0][0]));
+	GL_ERROR(glUniformMatrix4fv(u_LightView,  1, GL_FALSE, &view[0][0]));
+	GL_ERROR(glDrawArrays(GL_TRIANGLES, 0, 36));
+
 	SwapBuffers(dc);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	GL_ERROR(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }

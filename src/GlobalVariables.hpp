@@ -8,6 +8,21 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#ifdef _DEBUG
+#define DEBUG_ONLY(x) x
+#define GL_ERROR(x) x; \
+{ \
+	GLenum glError = glGetError(); \
+	if (glError) {	\
+		printf("OpenGl ERROR: %X\n", glError); \
+		__debugbreak(); \
+	} \
+}
+#else
+#define  DEBUG_ONLY(X)
+#define GL_ERROR(x) x
+#endif
+
 #define CLEAR_COLOR_PARAM 0.05f, 0.05f, 0.05f, 1.0f
 
 namespace pug {
@@ -78,4 +93,7 @@ extern MSG msg;
 extern bool windowFocus;
 
 // OpenGL global variables;
-extern GLint u_Model, u_View, u_Proj;
+extern GLuint objProg, lightProg;
+extern GLint
+u_ObjModel, u_ObjView, u_ObjProj,
+u_LightModel, u_LightView, u_LightProj;

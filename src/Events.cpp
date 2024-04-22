@@ -7,7 +7,7 @@
 
 POINT prevMousePos = { 0, 0 };
 pug::vec3f playerVec = { 0.0f, 0.0f, 0.0f };
-float sina, cosa;
+float sina = 0.0f, cosa = 1.0f;
 
 LRESULT CALLBACK windowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	switch (msg) {
@@ -17,10 +17,11 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	case WM_SIZE:
 		windowWidth  = LOWORD(lParam);
 		windowHeight = HIWORD(lParam);
-		glViewport(0, 0, windowWidth, windowHeight);
+		GL_ERROR(glViewport(0, 0, windowWidth, windowHeight));
 
 		proj = glm::perspective(glm::radians(c_DefFov), (float)windowWidth / windowHeight, c_NearClip, c_FarClip);
-		glUniformMatrix4fv(u_Proj, 1, GL_FALSE, &proj[0][0]); 
+		GL_ERROR(glUniformMatrix4fv(u_ObjProj, 1, GL_FALSE, &proj[0][0]));
+		GL_ERROR(glUniformMatrix4fv(u_LightProj, 1, GL_FALSE, &proj[0][0]));
 		render();
 
 		return 0;

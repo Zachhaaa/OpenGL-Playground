@@ -27,6 +27,8 @@ inline bool processEvents() {
 	if (GetAsyncKeyState(VK_MBUTTON) & 0x8000) {
 		camAng.y += c_MouseSensitivity * (curMousePos.x - prevMousePos.x);
 		camAng.x += c_MouseSensitivity * (curMousePos.y - prevMousePos.y);
+		if      (camAng.x > glm::radians(90.0f))  camAng.x = glm::radians(90.0f);
+		else if (camAng.x < glm::radians(-90.0f)) camAng.x = glm::radians(-90.0f);
 		sina = sin(camAng.y);
 		cosa = cos(camAng.y);
 	}
