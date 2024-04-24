@@ -137,48 +137,54 @@ bool initOpenGL(int nCmdShow) {
 	GL_ERROR(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	SwapBuffers(dc);
 
+	// NOTE: 
+	// Normal Vectors must be normalized
+	// 
+	// Make sure to change the glVertexAttribPointer functions accordingly to match the data
+	// in the vertices array
+
 	float vertices[] = {
-		-0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-		-0.5f, -0.5f,  0.5f,
-		 0.5f, -0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-		 0.5f,  0.5f,  0.5f,
-		 0.5f,  0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-		-0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f,  0.5f,
-		 0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f, -0.5f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-		-0.5f,  0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		 0.5f,  0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 	};
 	GLuint vertexBuffer;
 	GLuint objectVA;
@@ -188,26 +194,56 @@ bool initOpenGL(int nCmdShow) {
 	GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer));
 	GL_ERROR(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
 
-	GL_ERROR(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0));
+	GL_ERROR(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0));
 	GL_ERROR(glEnableVertexAttribArray(0));
+	GL_ERROR(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float))));
+	GL_ERROR(glEnableVertexAttribArray(1));
 
 
 	const char* objVertShadSrc =
 		"#version 330 core\n"
 		"layout (location = 0) in vec3 aPos;\n"
+		"layout (location = 1) in vec3 aNormal;\n"
+		"\n"
+		"out vec3 FragPos;\n"
+		"out vec3 Normal;\n"
+		"\n"
 		"uniform mat4 u_Model, u_View, u_Proj;\n"
+		"\n"
 		"void main() {\n"
 		"  gl_Position = u_Proj * u_View * u_Model * vec4(aPos, 1.0);\n"
+		"  FragPos = vec3(u_Model * vec4(aPos, 1.0));"
+		"  Normal = aNormal;\n"
 		"}\n";
 	const char* objFragShadSrc =
 		"#version 330 core\n"
 		"out vec4 FragColor;\n"
 		"\n"
+		"in vec3 Normal;\n"
+		"in vec3 FragPos;\n"
+		"\n"
 		"uniform vec3 u_ObjCol;\n"
 		"uniform vec3 u_LightCol;\n"
+		"uniform vec3 u_LightPos;\n"
+		"uniform vec3 u_ViewPos;\n"
 		"\n"
 		"void main() {\n"
-		"  FragColor = vec4(u_ObjCol * u_LightCol, 1.0);\n"
+		"  float c_Amb = 0.1;"
+		"  vec3 amb = c_Amb * u_LightCol;\n"
+		"  \n"
+		"  vec3 lightDir = normalize(u_LightPos - FragPos);\n"
+		"  float diff = max(dot(Normal, lightDir), 0.0);\n"
+		"  vec3 diffuse = diff * u_LightCol;\n"
+		"  \n"
+		"  float specularStrength = 0.8;\n"
+		"  vec3 viewDir = normalize(-u_ViewPos - FragPos);\n"
+		"  vec3 reflectDir = reflect(-lightDir, Normal);\n"
+		"  float spec = pow(max(dot(viewDir, reflectDir), 0.0), 4);\n"
+		"  vec3 specular = specularStrength * spec * u_LightCol;\n"
+		"  \n"
+		"  vec3 result = (amb + diffuse + specular) * u_ObjCol;"
+		"  \n"
+		"  FragColor = vec4(result, 1.0);\n"
 		"}";
 	const char* lightVertShadSrc =
 		"#version 330 core\n"
@@ -293,6 +329,8 @@ bool initOpenGL(int nCmdShow) {
 	u_ObjProj       = GL_ERROR(glGetUniformLocation(objProg,   "u_Proj"));
 	u_ObjObjCol     = GL_ERROR(glGetUniformLocation(objProg,   "u_ObjCol"));
 	u_ObjLightCol   = GL_ERROR(glGetUniformLocation(objProg,   "u_LightCol"));
+	u_LightPos      = GL_ERROR(glGetUniformLocation(objProg,   "u_LightPos"));
+	u_ViewPos       = GL_ERROR(glGetUniformLocation(objProg,   "u_ViewPos"));
 	u_LightModel    = GL_ERROR(glGetUniformLocation(lightProg, "u_Model"));
 	u_LightView     = GL_ERROR(glGetUniformLocation(lightProg, "u_View"));
 	u_LightProj     = GL_ERROR(glGetUniformLocation(lightProg, "u_Proj"));
@@ -302,6 +340,8 @@ bool initOpenGL(int nCmdShow) {
 		u_ObjProj	    == -1 ||
 		u_ObjObjCol	    == -1 ||
 		u_ObjLightCol   == -1 ||
+		u_LightPos      == -1 ||
+		u_ViewPos       == -1 ||
 		u_LightModel    == -1 ||
 		u_LightView	    == -1 ||
 		u_LightProj	    == -1 ||
@@ -316,6 +356,7 @@ bool initOpenGL(int nCmdShow) {
 	GL_ERROR(glUniformMatrix4fv(u_ObjProj,   1, GL_FALSE, &proj[0][0]));
 	GL_ERROR(glUniform3f(u_ObjObjCol,   objCol.x,   objCol.y,   objCol.z));
 	GL_ERROR(glUniform3f(u_ObjLightCol, lightCol.x, lightCol.y, lightCol.z));
+	GL_ERROR(glUniform3f(u_LightPos, lightPos.x, lightPos.y, lightPos.z));
 
 	GL_ERROR(glUseProgram(lightProg);)
 	GL_ERROR(glUniformMatrix4fv(u_LightProj, 1, GL_FALSE, &proj[0][0]));

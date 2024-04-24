@@ -20,5 +20,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 		render();
 	}
 	closeApp();
+
 	return 0;  
 }

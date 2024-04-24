@@ -14,11 +14,12 @@ inline void render() {
 	view  = translate(view, camPos);
 	GL_ERROR(glUniformMatrix4fv(u_ObjModel, 1, GL_FALSE, &model[0][0]));
 	GL_ERROR(glUniformMatrix4fv(u_ObjView,  1, GL_FALSE, &view[0][0]));
+	GL_ERROR(glUniform3f(u_ViewPos, camPos.x, camPos.y, camPos.z));
 	GL_ERROR(glDrawArrays(GL_TRIANGLES, 0, 36));
 
 	GL_ERROR(glUseProgram(lightProg));
 	
-	model = translate(mat4(1.0f), vec3(1.0f, 0.75f, -2.0f));
+	model = translate(mat4(1.0f), lightPos);
 	GL_ERROR(glUniformMatrix4fv(u_LightModel, 1, GL_FALSE, &model[0][0]));
 	GL_ERROR(glUniformMatrix4fv(u_LightView,  1, GL_FALSE, &view[0][0]));
 	GL_ERROR(glDrawArrays(GL_TRIANGLES, 0, 36));

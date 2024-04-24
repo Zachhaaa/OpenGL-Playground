@@ -12,15 +12,6 @@ inline bool processEvents() {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-	if (!windowFocus) return false;
-
-	playerVec = {0.0f, 0.0f, 0.0f};
-	if (GetAsyncKeyState('W') & 0x8000)       playerVec.z +=  1.0f;
-	if (GetAsyncKeyState('A') & 0x8000)       playerVec.x += -1.0f;
-	if (GetAsyncKeyState('S') & 0x8000)       playerVec.z += -1.0f;
-	if (GetAsyncKeyState('D') & 0x8000)       playerVec.x +=  1.0f;
-	if (GetAsyncKeyState(VK_SPACE) & 0x8000)  playerVec.y += -1.0f;
-	if (GetAsyncKeyState(VK_LSHIFT) & 0x8000) playerVec.y +=  1.0f;
 
 	POINT curMousePos;
 	GetCursorPos(&curMousePos);
@@ -33,6 +24,16 @@ inline bool processEvents() {
 		cosa = cos(camAng.y);
 	}
 	prevMousePos = curMousePos;
+
+	if (!windowFocus) return false;
+
+	playerVec = {0.0f, 0.0f, 0.0f};
+	if (GetAsyncKeyState('W') & 0x8000)       playerVec.z +=  1.0f;
+	if (GetAsyncKeyState('A') & 0x8000)       playerVec.x += -1.0f;
+	if (GetAsyncKeyState('S') & 0x8000)       playerVec.z += -1.0f;
+	if (GetAsyncKeyState('D') & 0x8000)       playerVec.x +=  1.0f;
+	if (GetAsyncKeyState(VK_SPACE) & 0x8000)  playerVec.y += -1.0f;
+	if (GetAsyncKeyState(VK_LSHIFT) & 0x8000) playerVec.y +=  1.0f;
 
 	ULONGLONG currentTime = GetTickCount64();
 	float posDiff = c_MoveSensitivity * (currentTime - previousTime);

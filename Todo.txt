@@ -1,0 +1,7 @@
+Continue on learnOpenGl
+
+Look at ways to optimize the Fragment Shader
+  -Learn how reflecting a vector works
+  -Instead of normalizing vectors, try dividing by the magnitude after computing dot product.
+
+LATER: Implement IMGUI
