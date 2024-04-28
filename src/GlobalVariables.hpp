@@ -8,6 +8,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <imgui.h>
+#include <imgui_impl_win32.h>
+#include <imgui_impl_opengl3.h>
+
 #ifdef _DEBUG
 #define DEBUG_ONLY(x) x
 #define GL_ERROR(x) x; \

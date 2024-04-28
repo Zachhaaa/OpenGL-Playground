@@ -362,9 +362,23 @@ bool initOpenGL(int nCmdShow) {
 	GL_ERROR(glUniformMatrix4fv(u_LightProj, 1, GL_FALSE, &proj[0][0]));
 	GL_ERROR(glUniform3f(u_LightLightCol, lightCol.x, lightCol.y, lightCol.z));
 
-	ShowWindow(hwnd, nCmdShow);
-
 	return true;
+}
+
+void initImGui() {
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+	ImGui_ImplWin32_Init(hwnd);
+	ImGui_ImplOpenGL3_Init();
+
+	io.Fonts->Clear();
+	io.Fonts->AddFontFromFileTTF("C:/Windows/Fonts/arial.ttf", scale * 16.0f);
+	io.Fonts->Build();
 }
 
 bool initAll(HINSTANCE hInstance, int nCmdShow) {
@@ -378,5 +392,11 @@ bool initAll(HINSTANCE hInstance, int nCmdShow) {
 		DEBUG_ONLY(printf("OpenGL initialization failed\n"); __debugbreak());
 		return false;
 	}
+	initImGui();
+
+	//Make sure this gets called last in the init
+	//Because it will run the windowProc and call events that render, which must be initialized
+	ShowWindow(hwnd, nCmdShow);
+
 	return true;
 }

@@ -2,4 +2,6 @@ x64/
 Win23OpenGL/
 .vs/
 
+imgui.ini
+
 *.user

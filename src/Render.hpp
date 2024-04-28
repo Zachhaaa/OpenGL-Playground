@@ -7,6 +7,12 @@
 
 inline void render() {
 	using namespace glm;
+
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+	ImGui::ShowDemoWindow();
+
 	GL_ERROR(glUseProgram(objProg));
 
 	model = mat4(1.0f);
@@ -24,4 +30,10 @@ inline void render() {
 	GL_ERROR(glUniformMatrix4fv(u_LightView,  1, GL_FALSE, &view[0][0]));
 	GL_ERROR(glDrawArrays(GL_TRIANGLES, 0, 36));
 
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	SwapBuffers(dc);
+
+	GL_ERROR(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
