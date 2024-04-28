@@ -76,6 +76,7 @@ windowWidth,
 windowHeight,
 windowMinWidth,
 windowMinHeight;
+extern float scale;
 
 // General global variables:
 extern ULONGLONG appStartTime;

@@ -35,7 +35,7 @@ bool initWindow(HINSTANCE hInstance, int nCmdShow) {
 
 	RegisterClass(&wc);
 
-	float scale = getInitMonitorScale();
+	scale = getInitMonitorScale();
 	windowWidth     = (unsigned)(c_WindowStartWidth  * scale);
 	windowHeight    = (unsigned)(c_WindowStartHeight * scale);
 	windowMinWidth  = (unsigned)(c_WindowMinWidth    * scale);
@@ -228,17 +228,17 @@ bool initOpenGL(int nCmdShow) {
 		"uniform vec3 u_ViewPos;\n"
 		"\n"
 		"void main() {\n"
-		"  float c_Amb = 0.1;"
+		"  float c_Amb = 0.3;"
 		"  vec3 amb = c_Amb * u_LightCol;\n"
 		"  \n"
 		"  vec3 lightDir = normalize(u_LightPos - FragPos);\n"
 		"  float diff = max(dot(Normal, lightDir), 0.0);\n"
 		"  vec3 diffuse = diff * u_LightCol;\n"
 		"  \n"
-		"  float specularStrength = 0.8;\n"
+		"  float specularStrength = 0.6;\n"
 		"  vec3 viewDir = normalize(-u_ViewPos - FragPos);\n"
 		"  vec3 reflectDir = reflect(-lightDir, Normal);\n"
-		"  float spec = pow(max(dot(viewDir, reflectDir), 0.0), 4);\n"
+		"  float spec = pow(max(dot(viewDir, reflectDir), 0.0), 64);\n"
 		"  vec3 specular = specularStrength * spec * u_LightCol;\n"
 		"  \n"
 		"  vec3 result = (amb + diffuse + specular) * u_ObjCol;"

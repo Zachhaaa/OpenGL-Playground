@@ -3,13 +3,19 @@
 
 #include <windowsx.h>
 
+#include <imgui_impl_win32.h>
+
 #include <cstdio>
 
 POINT prevMousePos = { 0, 0 };
 pug::vec3f playerVec = { 0.0f, 0.0f, 0.0f };
 float sina = 0.0f, cosa = 1.0f;
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 LRESULT CALLBACK windowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam)) return true;
+
 	switch (msg) {
 	case WM_DESTROY:
 		PostQuitMessage(0);

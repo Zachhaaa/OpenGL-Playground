@@ -5,6 +5,7 @@ windowWidth,
 windowHeight,
 windowMinWidth,
 windowMinHeight;
+float scale;
 
 // General global variables:
 ULONGLONG appStartTime;

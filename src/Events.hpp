@@ -8,9 +8,9 @@ extern float sina, cosa;
 
 inline bool processEvents() {
 	if (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE)) {
-		if (msg.message == WM_QUIT) return true;
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
+		if (msg.message == WM_QUIT) return true;
 	}
 
 	POINT curMousePos;
@@ -29,6 +29,7 @@ inline bool processEvents() {
 
 	playerVec = {0.0f, 0.0f, 0.0f};
 	if (GetAsyncKeyState('W') & 0x8000)       playerVec.z +=  1.0f;
+
 	if (GetAsyncKeyState('A') & 0x8000)       playerVec.x += -1.0f;
 	if (GetAsyncKeyState('S') & 0x8000)       playerVec.z += -1.0f;
 	if (GetAsyncKeyState('D') & 0x8000)       playerVec.x +=  1.0f;
