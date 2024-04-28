@@ -5,6 +5,25 @@
 
 #include "GlobalVariables.hpp"
 
+inline void renderMyWindow() {
+	ImGui::SetNextWindowSize(ImVec2(600, 600), ImGuiCond_Once);
+	
+
+
+	ImGui::Begin("Debug Menu");
+	ImGui::Text("Hello, World");
+	if (ImGui::CollapsingHeader("Object")) {
+		ImGui::Text("This is a collapsing header");
+	}
+	ImGui::Text("Camera Position: (%.2f, %.2f, %.2f)", camPos.x, camPos.y, camPos.z);
+	ImGui::Text("Camera Angle: (%.2f, %.2f)", camAng.y, camAng.x);
+	ImGui::Text("Window Size: (%u, %u)", windowWidth, windowHeight);
+	/*ImGui::Text("");
+	ImGui::Text("");
+	ImGui::Text("");*/
+	ImGui::End();
+}
+
 inline void render() {
 	using namespace glm;
 
@@ -12,6 +31,8 @@ inline void render() {
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 	ImGui::ShowDemoWindow();
+
+	renderMyWindow();
 
 	GL_ERROR(glUseProgram(objProg));
 

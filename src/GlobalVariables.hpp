@@ -45,10 +45,10 @@ namespace pug {
 /// The 6 values below get multiplied by the user set scale to determine the pixel values
 /// </summary>
 constexpr unsigned
-c_WindowStartPosX   = 200,
-c_WindowStartPosY   = 200,
-c_WindowStartWidth  = 1000,
-c_WindowStartHeight = 800,
+c_WindowStartPosX   = 100,
+c_WindowStartPosY   = 100,
+c_WindowStartWidth  = 1500,
+c_WindowStartHeight = 900,
 c_WindowMinWidth    = 200,
 c_WindowMinHeight   = 200;
 
