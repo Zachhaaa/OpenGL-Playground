@@ -103,6 +103,23 @@ extern bool windowFocus;
 
 // OpenGL global variables;
 extern GLuint objProg, lightProg;
-extern GLint
-u_ObjModel, u_ObjView, u_ObjProj, u_ObjObjCol, u_ObjLightCol, u_LightPos, u_ViewPos,
-u_LightModel, u_LightView, u_LightProj, u_LightLightCol;
+namespace App {
+	struct ObjUniforms {
+		GLint
+		u_Model, 
+		u_View, 
+		u_Proj, 
+		u_LightCol, 
+		u_LightPos, 
+		u_ViewPos;
+	};
+	struct LightUniforms {
+		GLint
+		u_Model,
+		u_View,
+		u_Proj,
+		u_LightCol;
+	};
+}
+extern App::ObjUniforms ObjUni;
+extern App::LightUniforms LightUni;

@@ -26,10 +26,10 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		proj = glm::perspective(glm::radians(c_DefFov), (float)windowWidth / windowHeight, c_NearClip, c_FarClip);
 
 		GL_ERROR(glUseProgram(objProg));
-		GL_ERROR(glUniformMatrix4fv(u_ObjProj, 1, GL_FALSE, &proj[0][0]));
+		GL_ERROR(glUniformMatrix4fv(ObjUni.u_Proj, 1, GL_FALSE, &proj[0][0]));
 
 		GL_ERROR(glUseProgram(lightProg));
-		GL_ERROR(glUniformMatrix4fv(u_LightProj, 1, GL_FALSE, &proj[0][0]));
+		GL_ERROR(glUniformMatrix4fv(LightUni.u_Proj, 1, GL_FALSE, &proj[0][0]));
 		render();
 
 		return 0;

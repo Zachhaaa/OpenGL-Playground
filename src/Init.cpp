@@ -93,6 +93,17 @@ GLint queryProgramErrors(GLuint program) {
 	)
 	return success;
 }
+GLint getUniform(GLuint prog, const char* name) {
+	GLint loc = GL_ERROR(glGetUniformLocation(prog, name));
+	DEBUG_ONLY(
+	if(loc == -1) {
+		printf("ERROR finding uniform location: %s\n", name); 
+		__debugbreak(); 
+	}
+	)
+	return loc;
+}
+
 
 bool initOpenGL(int nCmdShow) {
 	PIXELFORMATDESCRIPTOR pfd;
@@ -222,26 +233,29 @@ bool initOpenGL(int nCmdShow) {
 		"in vec3 Normal;\n"
 		"in vec3 FragPos;\n"
 		"\n"
-		"uniform vec3 u_ObjCol;\n"
+		"struct Material {\n"
+		"  vec3 ambient, diffuse, specular;\n"
+		"  float shininess;\n"
+		"};\n"
+		"\n"
+		"uniform Material material;\n"
 		"uniform vec3 u_LightCol;\n"
 		"uniform vec3 u_LightPos;\n"
 		"uniform vec3 u_ViewPos;\n"
 		"\n"
 		"void main() {\n"
-		"  float c_Amb = 0.3;"
-		"  vec3 amb = c_Amb * u_LightCol;\n"
+		"  vec3 amb = material.ambient * u_LightCol;\n"
 		"  \n"
 		"  vec3 lightDir = normalize(u_LightPos - FragPos);\n"
 		"  float diff = max(dot(Normal, lightDir), 0.0);\n"
-		"  vec3 diffuse = diff * u_LightCol;\n"
+		"  vec3 diffuse = diff * u_LightCol * material.diffuse;\n"
 		"  \n"
-		"  float specularStrength = 0.6;\n"
 		"  vec3 viewDir = normalize(-u_ViewPos - FragPos);\n"
 		"  vec3 reflectDir = reflect(-lightDir, Normal);\n"
-		"  float spec = pow(max(dot(viewDir, reflectDir), 0.0), 64);\n"
-		"  vec3 specular = specularStrength * spec * u_LightCol;\n"
+		"  float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);\n"
+		"  vec3 specular = spec * material.specular * u_LightCol;\n"
 		"  \n"
-		"  vec3 result = (amb + diffuse + specular) * u_ObjCol;"
+		"  vec3 result = amb + diffuse + specular;"
 		"  \n"
 		"  FragColor = vec4(result, 1.0);\n"
 		"}";
@@ -323,44 +337,29 @@ bool initOpenGL(int nCmdShow) {
 	GL_ERROR(glDeleteShader(objFragShad));
 	GL_ERROR(glDeleteShader(lightFragShad));
 	GL_ERROR(glDeleteShader(lightFragShad));
+	
+	ObjUni.u_Model    = getUniform(objProg, "u_Model");
+	ObjUni.u_View     = getUniform(objProg, "u_View"); 
+	ObjUni.u_Proj     = getUniform(objProg, "u_Proj"); 
+	ObjUni.u_LightCol = getUniform(objProg, "u_LightCol");
+	ObjUni.u_LightPos = getUniform(objProg, "u_LightPos");
+	ObjUni.u_ViewPos  = getUniform(objProg, "u_ViewPos");
 
-	u_ObjModel      = GL_ERROR(glGetUniformLocation(objProg,   "u_Model"));
-	u_ObjView       = GL_ERROR(glGetUniformLocation(objProg,   "u_View"));
-	u_ObjProj       = GL_ERROR(glGetUniformLocation(objProg,   "u_Proj"));
-	u_ObjObjCol     = GL_ERROR(glGetUniformLocation(objProg,   "u_ObjCol"));
-	u_ObjLightCol   = GL_ERROR(glGetUniformLocation(objProg,   "u_LightCol"));
-	u_LightPos      = GL_ERROR(glGetUniformLocation(objProg,   "u_LightPos"));
-	u_ViewPos       = GL_ERROR(glGetUniformLocation(objProg,   "u_ViewPos"));
-	u_LightModel    = GL_ERROR(glGetUniformLocation(lightProg, "u_Model"));
-	u_LightView     = GL_ERROR(glGetUniformLocation(lightProg, "u_View"));
-	u_LightProj     = GL_ERROR(glGetUniformLocation(lightProg, "u_Proj"));
-	u_LightLightCol = GL_ERROR(glGetUniformLocation(lightProg, "u_LightCol"));
-	if (u_ObjModel	    == -1 ||
-		u_ObjView	    == -1 ||
-		u_ObjProj	    == -1 ||
-		u_ObjObjCol	    == -1 ||
-		u_ObjLightCol   == -1 ||
-		u_LightPos      == -1 ||
-		u_ViewPos       == -1 ||
-		u_LightModel    == -1 ||
-		u_LightView	    == -1 ||
-		u_LightProj	    == -1 ||
-		u_LightLightCol == -1 
-		) {
-		DEBUG_ONLY(printf("ERROR finding uniform location\n"); __debugbreak());
-		return false;
-	}
+	LightUni.u_Model    = getUniform(lightProg, "u_Model");
+	LightUni.u_View     = getUniform(lightProg, "u_View");
+	LightUni.u_Proj     = getUniform(lightProg, "u_Proj");
+	LightUni.u_LightCol = getUniform(lightProg, "u_LightCol");
+
 	proj = glm::perspective(glm::radians(c_DefFov), (float)windowWidth/windowHeight, c_NearClip, c_FarClip);
 
 	GL_ERROR(glUseProgram(objProg);)
-	GL_ERROR(glUniformMatrix4fv(u_ObjProj,   1, GL_FALSE, &proj[0][0]));
-	GL_ERROR(glUniform3f(u_ObjObjCol,   objCol.x,   objCol.y,   objCol.z));
-	GL_ERROR(glUniform3f(u_ObjLightCol, lightCol.x, lightCol.y, lightCol.z));
-	GL_ERROR(glUniform3f(u_LightPos, lightPos.x, lightPos.y, lightPos.z));
+	GL_ERROR(glUniformMatrix4fv(ObjUni.u_Proj,   1, GL_FALSE, &proj[0][0]));
+	GL_ERROR(glUniform3f(ObjUni.u_LightCol, lightCol.x, lightCol.y, lightCol.z));
+	GL_ERROR(glUniform3f(ObjUni.u_LightPos, lightPos.x, lightPos.y, lightPos.z));
 
 	GL_ERROR(glUseProgram(lightProg);)
-	GL_ERROR(glUniformMatrix4fv(u_LightProj, 1, GL_FALSE, &proj[0][0]));
-	GL_ERROR(glUniform3f(u_LightLightCol, lightCol.x, lightCol.y, lightCol.z));
+	GL_ERROR(glUniformMatrix4fv(LightUni.u_Proj, 1, GL_FALSE, &proj[0][0]));
+	GL_ERROR(glUniform3f(LightUni.u_LightCol, lightCol.x, lightCol.y, lightCol.z));
 
 	return true;
 }
