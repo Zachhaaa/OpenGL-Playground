@@ -1,11 +1,20 @@
+Before moving on in OpenGL:
+
+  Make a reset button for materials.
+  allow for certain constants to be changed not just the color vectors for each Phong component
+
 Continue on learnOpenGl
-  
+
+Optimizations:
+
+Send uniforms in bulk
+  -Pass a struct to a uniform through an array and then cast that array into the coresponding types in the shader
+
 Look at ways to optimize the Fragment Shader
   -Learn how reflecting a vector works
   -Instead of normalizing vectors, try dividing by the magnitude after computing dot product.
 
-LATER: Implement IMGUI
-
 BUGS:
 
+-fix assert on window minimize caused by perspective function from glm
 -fix clear and swapbuffers in render function because I need it to use during resize event

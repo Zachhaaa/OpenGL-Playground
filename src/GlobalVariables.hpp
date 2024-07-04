@@ -39,7 +39,11 @@ namespace pug {
 	struct vec3f {
 		float x, y, z;
 	};
+
 };
+constexpr pug::vec3f operator*(float scaler, pug::vec3f vec) {
+	return { scaler * vec.x, scaler * vec.y, scaler * vec.z };
+}
 
 /// <summary>
 /// The 6 values below get multiplied by the user set scale to determine the pixel values
@@ -69,9 +73,14 @@ c_NearClip = 0.1f,
 c_FarClip = 100.0f;
 
 // Scene Constants
-constexpr pug::vec3f lightCol = { 1.0f,  1.0f,  1.0f  };
-constexpr pug::vec3f objCol   = { 0.95f, 0.42f, 0.21f };
-constexpr glm::vec3  lightPos(2.0f, 3.0f, 4.0f);
+extern pug::vec3f lightCol;
+extern pug::vec3f objCol;
+extern pug::vec3f objAmbient;
+extern pug::vec3f objDiffuse;
+extern pug::vec3f objSpecular;
+extern float objShininess;
+extern glm::vec3  lightPos;
+
 /// <summary>
 /// Determined and calculated
 /// </summary>
@@ -104,6 +113,9 @@ extern bool windowFocus;
 // OpenGL global variables;
 extern GLuint objProg, lightProg;
 namespace App {
+	struct MaterialUniform {
+		GLint ambient, diffuse, specular, shininess;
+	};
 	struct ObjUniforms {
 		GLint
 		u_Model, 
@@ -112,6 +124,7 @@ namespace App {
 		u_LightCol, 
 		u_LightPos, 
 		u_ViewPos;
+		MaterialUniform u_Material;
 	};
 	struct LightUniforms {
 		GLint

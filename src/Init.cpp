@@ -338,12 +338,18 @@ bool initOpenGL(int nCmdShow) {
 	GL_ERROR(glDeleteShader(lightFragShad));
 	GL_ERROR(glDeleteShader(lightFragShad));
 	
-	ObjUni.u_Model    = getUniform(objProg, "u_Model");
-	ObjUni.u_View     = getUniform(objProg, "u_View"); 
-	ObjUni.u_Proj     = getUniform(objProg, "u_Proj"); 
-	ObjUni.u_LightCol = getUniform(objProg, "u_LightCol");
-	ObjUni.u_LightPos = getUniform(objProg, "u_LightPos");
-	ObjUni.u_ViewPos  = getUniform(objProg, "u_ViewPos");
+	ObjUni.u_Model              = getUniform(objProg, "u_Model");
+	ObjUni.u_View               = getUniform(objProg, "u_View"); 
+	ObjUni.u_Proj               = getUniform(objProg, "u_Proj"); 
+	ObjUni.u_LightCol           = getUniform(objProg, "u_LightCol");
+	ObjUni.u_LightPos           = getUniform(objProg, "u_LightPos");
+	ObjUni.u_ViewPos            = getUniform(objProg, "u_ViewPos");
+
+	ObjUni.u_Material.ambient   = getUniform(objProg, "material.ambient");
+	ObjUni.u_Material.diffuse   = getUniform(objProg, "material.diffuse");
+	ObjUni.u_Material.specular  = getUniform(objProg, "material.specular");
+	ObjUni.u_Material.shininess = getUniform(objProg, "material.shininess");
+
 
 	LightUni.u_Model    = getUniform(lightProg, "u_Model");
 	LightUni.u_View     = getUniform(lightProg, "u_View");
