@@ -1,5 +1,7 @@
 #include "GlobalVariables.hpp"
 #include "init.hpp"
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 BOOL (WINAPI* wglSwapIntervalEXT)(int);
 
@@ -57,7 +59,7 @@ bool initWindow(HINSTANCE hInstance, int nCmdShow) {
 	);
 
 	if (hwnd == NULL) { 
-		DEBUG_ONLY(printf("Window handle: hwnd, failed. hwnd = NULL\n"); __debugbreak());
+		DEBUG_ONLY(printf("Window Creation failed\n"); __debugbreak());
 		return false; 
 	}
 
@@ -103,7 +105,79 @@ GLint getUniform(GLuint prog, const char* name) {
 	)
 	return loc;
 }
+bool initShader(GLuint prog, GLenum type, const wchar_t* fileName) {
+	HANDLE file = CreateFile(
+		fileName, 
+		GENERIC_READ, 
+		0, 
+		NULL, 
+		OPEN_EXISTING, 
+		FILE_ATTRIBUTE_NORMAL, 
+		NULL);
 
+	if (file == INVALID_HANDLE_VALUE) {
+		DEBUG_ONLY(wprintf(L"Cant open: %s\n", fileName); __debugbreak());
+		return false; 
+	}
+	unsigned long long fileSize;
+	GetFileSizeEx(file, (PLARGE_INTEGER)&fileSize);
+	char* shaderSrc = new char[fileSize + 1]; 
+
+	DWORD bytesRead;
+	ReadFile(file, shaderSrc, fileSize, &bytesRead, NULL); 
+	shaderSrc[bytesRead] = '\0'; 
+
+	CloseHandle(file); 
+
+
+
+	GLuint shdr = GL_ERROR(glCreateShader(type));
+	if (!shdr) {
+		DEBUG_ONLY(__debugbreak());
+		return false;
+	}
+	GL_ERROR(glShaderSource(shdr, 1, &shaderSrc, NULL));
+	GL_ERROR(glCompileShader(shdr));
+
+	if (!queryShaderErrors(shdr)) {
+		DEBUG_ONLY(__debugbreak());
+		return false;
+	}
+
+	GL_ERROR(glAttachShader(prog, shdr));
+
+	GL_ERROR(glDeleteShader(shdr));
+	delete[] shaderSrc; 
+	return true;
+}
+bool initTexture(GLenum textureSlot, const char* file) {
+	GL_ERROR(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+	GL_ERROR(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+	GL_ERROR(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+	GL_ERROR(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+
+	int width, height, nrChannels;
+	unsigned char* img = stbi_load(file, &width, &height, &nrChannels, 0);
+	
+	if (!img) {
+		DEBUG_ONLY(printf("texture image load failure\n"); __debugbreak());
+		return false;
+	}
+	if (nrChannels != 4) {
+		DEBUG_ONLY(printf("texture image must have 4 channels\n"); __debugbreak());
+		return false;
+	}
+	unsigned int texture;
+	GL_ERROR(glActiveTexture(textureSlot));
+	GL_ERROR(glGenTextures(1, &texture));
+	GL_ERROR(glBindTexture(GL_TEXTURE_2D, texture));
+
+	GL_ERROR(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img));
+	GL_ERROR(glGenerateMipmap(GL_TEXTURE_2D));
+	stbi_image_free(img);
+
+	return true; 
+}
 
 bool initOpenGL(int nCmdShow) {
 	PIXELFORMATDESCRIPTOR pfd;
@@ -142,6 +216,7 @@ bool initOpenGL(int nCmdShow) {
 	}
 
 	wglSwapIntervalEXT = (WGLSWAPINTERVALEXT)wglGetProcAddress("wglSwapIntervalEXT");
+	wglSwapIntervalEXT(-1);
 
 	GL_ERROR(glClearColor(CLEAR_COLOR_PARAM));
 	GL_ERROR(glEnable(GL_DEPTH_TEST));
@@ -155,47 +230,48 @@ bool initOpenGL(int nCmdShow) {
 	// in the vertices array
 
 	float vertices[] = {
-	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-
-	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+		// back
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f,
+		// front
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f, 0.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f, 1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f, 1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f, 1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f, 0.0f, 0.0f,
+		// left
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+		// right
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+		 // bottom
+		 -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f,
+		  0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,
+		  0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f,
+		  0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f,
+		 -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f,
+		 -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f,
+		 // top
+		 -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f,
+		  0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f,
+		  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f,
+		  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f,
+		 -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f,
+		 -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f,
 	};
 	GLuint vertexBuffer;
 	GLuint objectVA;
@@ -205,167 +281,71 @@ bool initOpenGL(int nCmdShow) {
 	GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer));
 	GL_ERROR(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
 
-	GL_ERROR(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0));
+	GL_ERROR(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0));
 	GL_ERROR(glEnableVertexAttribArray(0));
-	GL_ERROR(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float))));
+	GL_ERROR(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))));
 	GL_ERROR(glEnableVertexAttribArray(1));
+	GL_ERROR(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))));
+	GL_ERROR(glEnableVertexAttribArray(2));
 
-
-	const char* objVertShadSrc =
-		"#version 330 core\n"
-		"layout (location = 0) in vec3 aPos;\n"
-		"layout (location = 1) in vec3 aNormal;\n"
-		"\n"
-		"out vec3 FragPos;\n"
-		"out vec3 Normal;\n"
-		"\n"
-		"uniform mat4 u_Model, u_View, u_Proj;\n"
-		"\n"
-		"void main() {\n"
-		"  gl_Position = u_Proj * u_View * u_Model * vec4(aPos, 1.0);\n"
-		"  FragPos = vec3(u_Model * vec4(aPos, 1.0));"
-		"  Normal = aNormal;\n"
-		"}\n";
-	const char* objFragShadSrc =
-		"#version 330 core\n"
-		"out vec4 FragColor;\n"
-		"\n"
-		"in vec3 Normal;\n"
-		"in vec3 FragPos;\n"
-		"\n"
-		"struct Material {\n"
-		"  vec3 ambient, diffuse, specular;\n"
-		"  float shininess;\n"
-		"};\n"
-		"\n"
-		"uniform Material material;\n"
-		"uniform vec3 u_LightCol;\n"
-		"uniform vec3 u_LightPos;\n"
-		"uniform vec3 u_ViewPos;\n"
-		"\n"
-		"void main() {\n"
-		"  vec3 amb = material.ambient * u_LightCol;\n"
-		"  \n"
-		"  vec3 lightDir = normalize(u_LightPos - FragPos);\n"
-		"  float diff = max(dot(Normal, lightDir), 0.0);\n"
-		"  vec3 diffuse = diff * u_LightCol * material.diffuse;\n"
-		"  \n"
-		"  vec3 viewDir = normalize(-u_ViewPos - FragPos);\n"
-		"  vec3 reflectDir = reflect(-lightDir, Normal);\n"
-		"  float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);\n"
-		"  vec3 specular = spec * material.specular * u_LightCol;\n"
-		"  \n"
-		"  vec3 result = amb + diffuse + specular;"
-		"  \n"
-		"  FragColor = vec4(result, 1.0);\n"
-		"}";
-	const char* lightVertShadSrc =
-		"#version 330 core\n"
-		"layout (location = 0) in vec3 aPos;\n"
-		"uniform mat4 u_Model, u_View, u_Proj;\n"
-		"void main() {\n"
-		"  gl_Position = u_Proj * u_View * u_Model * vec4(aPos, 1.0);\n"
-		"}\n";
-	const char* lightFragShadSrc =
-		"#version 330 core\n"
-		"out vec4 lightColor;\n"
-		"\n"
-		"uniform vec3 u_LightCol;\n"
-		"\n"
-		"void main() {\n"
-		"  lightColor = vec4(u_LightCol, 1.0f);\n"
-		"}\n";
-	GLuint objVertShad, objFragShad, lightVertShad, lightFragShad;
-	objVertShad   = GL_ERROR(glCreateShader(GL_VERTEX_SHADER));
-	objFragShad   = GL_ERROR(glCreateShader(GL_FRAGMENT_SHADER));
-	lightVertShad = GL_ERROR(glCreateShader(GL_VERTEX_SHADER));
-	lightFragShad = GL_ERROR(glCreateShader(GL_FRAGMENT_SHADER));
-	objProg       = GL_ERROR(glCreateProgram());
-	lightProg     = GL_ERROR(glCreateProgram());
+	objProg = GL_ERROR(glCreateProgram());
+	lightProg = GL_ERROR(glCreateProgram());
 	if (
-		!objVertShad ||
-		!objFragShad ||
-		!lightVertShad ||
-		!lightFragShad ||
-		!objProg ||
-		!lightProg
+		!initShader(objProg, GL_VERTEX_SHADER, L"res/Shaders/Object-Shader.vert") ||
+		!initShader(objProg, GL_FRAGMENT_SHADER, L"res/Shaders/Object-Shader.frag") ||
+		!initShader(lightProg, GL_VERTEX_SHADER, L"res/Shaders/Light-Shader.vert") ||
+		!initShader(lightProg, GL_FRAGMENT_SHADER, L"res/Shaders/Light-Shader.frag")
 		) {
-		DEBUG_ONLY(printf("glCreateShader() function failed\n"); __debugbreak());
 		return false;
 	}
 
-	GL_ERROR(glShaderSource(objVertShad,      1, &objVertShadSrc, NULL));
-	GL_ERROR(glShaderSource(objFragShad,   1, &objFragShadSrc,    NULL));
-	GL_ERROR(glShaderSource(lightVertShad, 1, &lightVertShadSrc, NULL));
-	GL_ERROR(glShaderSource(lightFragShad, 1, &lightFragShadSrc,  NULL));
-
-	GL_ERROR(glCompileShader(objVertShad));
-	GL_ERROR(glCompileShader(objFragShad));
-	GL_ERROR(glCompileShader(lightVertShad)); 
-	GL_ERROR(glCompileShader(lightFragShad));
-
-	GLint vertShadSuccess  = queryShaderErrors(objVertShad);
-	GLint fragShadSuccess  = queryShaderErrors(objFragShad);
-	GLint lightVertSuccess = queryShaderErrors(lightVertShad);
-	GLint lightShadSuccess = queryShaderErrors(lightFragShad);
-	if (!vertShadSuccess ||
-		!fragShadSuccess ||
-		!lightVertSuccess ||
-		!lightShadSuccess
-		) {
-		DEBUG_ONLY(__debugbreak());
-		return false;
-	}
-
-	GL_ERROR(glAttachShader(objProg, objVertShad));
-	GL_ERROR(glAttachShader(objProg, objFragShad));
-	glLinkProgram(objProg);
+	GL_ERROR(glLinkProgram(objProg));
 	if (!queryProgramErrors(objProg)) {
 		DEBUG_ONLY(__debugbreak());
 		return false;
 	}
-
-	GL_ERROR(glAttachShader(lightProg, lightVertShad));
-	GL_ERROR(glAttachShader(lightProg, lightFragShad));
 	GL_ERROR(glLinkProgram(lightProg));
 	if (!queryProgramErrors(lightProg)) {
 		DEBUG_ONLY(__debugbreak());
 		return false;
 	}
 
-	GL_ERROR(glDeleteShader(objVertShad));
-	GL_ERROR(glDeleteShader(objFragShad));
-	GL_ERROR(glDeleteShader(lightFragShad));
-	GL_ERROR(glDeleteShader(lightFragShad));
-	
-	ObjUni.u_Model              = getUniform(objProg, "u_Model");
-	ObjUni.u_View               = getUniform(objProg, "u_View"); 
-	ObjUni.u_Proj               = getUniform(objProg, "u_Proj"); 
-	ObjUni.u_LightCol           = getUniform(objProg, "u_LightCol");
-	ObjUni.u_LightPos           = getUniform(objProg, "u_LightPos");
-	ObjUni.u_ViewPos            = getUniform(objProg, "u_ViewPos");
+	ObjUni.u_Model = getUniform(objProg, "u_Model");
+	ObjUni.u_View = getUniform(objProg, "u_View");
+	ObjUni.u_Proj = getUniform(objProg, "u_Proj");
+	ObjUni.u_LightCol = getUniform(objProg, "u_LightCol");
+	ObjUni.u_LightPos = getUniform(objProg, "u_LightPos");
+	ObjUni.u_ViewPos = getUniform(objProg, "u_ViewPos");
 
-	ObjUni.u_Material.ambient   = getUniform(objProg, "material.ambient");
-	ObjUni.u_Material.diffuse   = getUniform(objProg, "material.diffuse");
-	ObjUni.u_Material.specular  = getUniform(objProg, "material.specular");
+	ObjUni.u_Material.ambient = getUniform(objProg, "material.ambient");
+	ObjUni.u_Material.diffuse = getUniform(objProg, "material.diffuse");
 	ObjUni.u_Material.shininess = getUniform(objProg, "material.shininess");
+	ObjUni.u_Material.objColor  = getUniform(objProg, "material.objColor");
+	ObjUni.u_Material.spec      = getUniform(objProg, "material.specular");
 
 
-	LightUni.u_Model    = getUniform(lightProg, "u_Model");
-	LightUni.u_View     = getUniform(lightProg, "u_View");
-	LightUni.u_Proj     = getUniform(lightProg, "u_Proj");
+	LightUni.u_Model = getUniform(lightProg, "u_Model");
+	LightUni.u_View = getUniform(lightProg, "u_View");
+	LightUni.u_Proj = getUniform(lightProg, "u_Proj");
 	LightUni.u_LightCol = getUniform(lightProg, "u_LightCol");
 
-	proj = glm::perspective(glm::radians(c_DefFov), (float)windowWidth/windowHeight, c_NearClip, c_FarClip);
+	proj = glm::perspective(glm::radians(c_DefFov), (float)windowWidth / windowHeight, c_NearClip, c_FarClip);
 
-	GL_ERROR(glUseProgram(objProg);)
-	GL_ERROR(glUniformMatrix4fv(ObjUni.u_Proj,   1, GL_FALSE, &proj[0][0]));
+	GL_ERROR(glUseProgram(objProg));
+	GL_ERROR(glUniformMatrix4fv(ObjUni.u_Proj, 1, GL_FALSE, &proj[0][0]));
 	GL_ERROR(glUniform3f(ObjUni.u_LightCol, lightCol.x, lightCol.y, lightCol.z));
 	GL_ERROR(glUniform3f(ObjUni.u_LightPos, lightPos.x, lightPos.y, lightPos.z));
+
+	if (!initTexture(GL_TEXTURE0, "res/Textures/Crate.png")) return false;
+	if (!initTexture(GL_TEXTURE1, "res/Textures/Crate-Specular.png")) return false;
+
+	GL_ERROR(glUniform1i(ObjUni.u_Material.objColor, 0));
+	GL_ERROR(glUniform1i(ObjUni.u_Material.spec,     1));
 
 	GL_ERROR(glUseProgram(lightProg);)
 	GL_ERROR(glUniformMatrix4fv(LightUni.u_Proj, 1, GL_FALSE, &proj[0][0]));
 	GL_ERROR(glUniform3f(LightUni.u_LightCol, lightCol.x, lightCol.y, lightCol.z));
+
 
 	return true;
 }
@@ -387,7 +367,6 @@ void initImGui() {
 }
 
 bool initAll(HINSTANCE hInstance, int nCmdShow) {
-	appStartTime = previousTime = GetTickCount64();
 	initConsole();
 	if (!initWindow(hInstance, nCmdShow)) {
 		DEBUG_ONLY(printf("Window initialization failed\n"); __debugbreak());

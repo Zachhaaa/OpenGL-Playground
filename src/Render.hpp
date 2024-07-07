@@ -21,28 +21,18 @@ inline void renderMyWindow() {
 		ImGui::ColorPicker3("Light Color", (float*)&lightCol);
 	}
 	if (ImGui::CollapsingHeader("Object Color Settings")) {
-		if (ImGui::TreeNode("Object Ambient")) {
-			ImGui::ColorPicker3("Object Ambient", (float*)&objAmbient);
-			ImGui::TreePop();
-		}
-		if (ImGui::TreeNode("Object Diffuse")) {
-			ImGui::ColorPicker3("Object Diffuse", (float*)&objDiffuse);
-			ImGui::TreePop();
-		}
-		if (ImGui::TreeNode("Object Specular")) {
-			ImGui::ColorPicker3("Object Specular", (float*)&objSpecular);
-			ImGui::TreePop();
-		}
-		if (ImGui::TreeNode("Object Shininess")) {
-			ImGui::SliderFloat("Specular", &objShininess, 1.0f, 1024); 
-			ImGui::TreePop();
-		}
+		ImGui::SliderFloat("Ambient", &objAmbient, 0.0f, 1.0);
+		ImGui::SliderFloat("Diffuse", &objDiffuse, 0.0f, 1.0);
+		ImGui::SliderFloat("Shininess", &objShininess, 1.0f, 512); 
 	}
+	ImGui::Text("fps: %.3f", ImGui::GetIO().Framerate);
 	ImGui::End();
 }
 
 inline void render() {
 	using namespace glm;
+
+	if (isMinimized) return;
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -60,10 +50,9 @@ inline void render() {
 	GL_ERROR(glUniformMatrix4fv(ObjUni.u_View,  1, GL_FALSE, &view[0][0]));
 	GL_ERROR(glUniform3f(ObjUni.u_ViewPos, camPos.x, camPos.y, camPos.z));
 	GL_ERROR(glUniform3f(ObjUni.u_LightCol, lightCol.x, lightCol.y, lightCol.z));
-	GL_ERROR(glUniform3f(ObjUni.u_Material.ambient, objAmbient.x, objAmbient.y, objAmbient.z));
-	GL_ERROR(glUniform3f(ObjUni.u_Material.diffuse, objDiffuse.x, objDiffuse.y, objDiffuse.z));
-	GL_ERROR(glUniform3f(ObjUni.u_Material.specular, objSpecular.x, objSpecular.y, objSpecular.z));
-	GL_ERROR(glUniform1f(ObjUni.u_Material.shininess, objShininess)); 
+	GL_ERROR(glUniform1f(ObjUni.u_Material.ambient, objAmbient));
+	GL_ERROR(glUniform1f(ObjUni.u_Material.diffuse, objDiffuse));
+	GL_ERROR(glUniform1f(ObjUni.u_Material.shininess, objShininess));
 
 	GL_ERROR(glDrawArrays(GL_TRIANGLES, 0, 36));
 
@@ -76,10 +65,11 @@ inline void render() {
 	GL_ERROR(glUniformMatrix4fv(LightUni.u_View,  1, GL_FALSE, &view[0][0]));
 	GL_ERROR(glDrawArrays(GL_TRIANGLES, 0, 36));
 
+
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	SwapBuffers(dc);
+	GL_ERROR(SwapBuffers(dc));
 
  	GL_ERROR(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }

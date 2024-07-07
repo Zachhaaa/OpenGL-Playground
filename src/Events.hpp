@@ -10,8 +10,10 @@ inline bool processEvents() {
 	if (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE)) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
-		if (msg.message == WM_QUIT) return true;
+		if (quit) 
+			return true;
 	}
+	if(isMinimized) return false;
 
 	POINT curMousePos;
 	GetCursorPos(&curMousePos);

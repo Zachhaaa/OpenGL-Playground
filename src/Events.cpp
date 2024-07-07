@@ -16,11 +16,18 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 	switch (msg) {
 	case WM_DESTROY:
-		PostQuitMessage(0);
-		return 0;
+		quit = true;
+		return 0; 
 	case WM_SIZE:
 		windowWidth  = LOWORD(lParam);
 		windowHeight = HIWORD(lParam);
+		if (lParam == 0) {
+			isMinimized = true; 
+			return 0;
+		}
+		else {
+			isMinimized = false; 
+		}
 		GL_ERROR(glViewport(0, 0, windowWidth, windowHeight));
 
 		proj = glm::perspective(glm::radians(c_DefFov), (float)windowWidth / windowHeight, c_NearClip, c_FarClip);

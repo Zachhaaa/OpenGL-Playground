@@ -1,7 +1,9 @@
 x64/
+x86/
 Win23OpenGL/
 .vs/
 
 imgui.ini
+imgui_log.txt
 
 *.user

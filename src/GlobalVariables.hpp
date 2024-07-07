@@ -74,11 +74,7 @@ c_FarClip = 100.0f;
 
 // Scene Constants
 extern pug::vec3f lightCol;
-extern pug::vec3f objCol;
-extern pug::vec3f objAmbient;
-extern pug::vec3f objDiffuse;
-extern pug::vec3f objSpecular;
-extern float objShininess;
+extern float objAmbient, objDiffuse, objShininess;
 extern glm::vec3  lightPos;
 
 /// <summary>
@@ -92,9 +88,10 @@ windowMinHeight;
 extern float scale;
 
 // General global variables:
-extern ULONGLONG appStartTime;
 extern ULONGLONG previousTime;
 extern glm::mat4 model, view, proj;
+extern bool quit;
+extern bool isMinimized;
 
 // Camera
 extern glm::vec3 camPos;
@@ -114,7 +111,7 @@ extern bool windowFocus;
 extern GLuint objProg, lightProg;
 namespace App {
 	struct MaterialUniform {
-		GLint ambient, diffuse, specular, shininess;
+		GLint ambient, diffuse, shininess, objColor, spec;
 	};
 	struct ObjUniforms {
 		GLint
