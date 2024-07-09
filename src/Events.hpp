@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GlobalVariables.hpp"
+//#include "GlobalVariables.hpp"
 
 extern POINT prevMousePos;
 extern pug::vec3f playerVec;
@@ -49,3 +49,4 @@ inline bool processEvents() {
 }
 
 LRESULT CALLBACK windowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);

@@ -124,7 +124,7 @@ bool initShader(GLuint prog, GLenum type, const wchar_t* fileName) {
 	char* shaderSrc = new char[fileSize + 1]; 
 
 	DWORD bytesRead;
-	ReadFile(file, shaderSrc, fileSize, &bytesRead, NULL); 
+	ReadFile(file, shaderSrc, (DWORD)fileSize, &bytesRead, NULL); 
 	shaderSrc[bytesRead] = '\0'; 
 
 	CloseHandle(file); 
@@ -342,7 +342,7 @@ bool initOpenGL(int nCmdShow) {
 	GL_ERROR(glUniform1i(ObjUni.u_Material.objColor, 0));
 	GL_ERROR(glUniform1i(ObjUni.u_Material.spec,     1));
 
-	GL_ERROR(glUseProgram(lightProg);)
+	GL_ERROR(glUseProgram(lightProg));
 	GL_ERROR(glUniformMatrix4fv(LightUni.u_Proj, 1, GL_FALSE, &proj[0][0]));
 	GL_ERROR(glUniform3f(LightUni.u_LightCol, lightCol.x, lightCol.y, lightCol.z));
 

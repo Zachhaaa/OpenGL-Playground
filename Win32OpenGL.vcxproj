@@ -135,7 +135,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glad\include;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\imgui;$(SolutionDir)Dependencies\imgui\backends;$(SolutionDir)Dependencies\stb_image</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glad\include;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\imgui;$(SolutionDir)Dependencies\imgui\backends;$(SolutionDir)Dependencies\stb_image;$(SolutionDir)Custom-Dependencies\OpenGL-Manager;$(SolutionDir)Custom-Dependencies\Window-Manager</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>
@@ -150,7 +150,6 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Custom-Dependencies\Window-Manager\Window-Manager.cpp" />
     <ClCompile Include="Dependencies\glad\src\glad.c" />
     <ClCompile Include="Dependencies\imgui\backends\imgui_impl_opengl3.cpp" />
     <ClCompile Include="Dependencies\imgui\backends\imgui_impl_win32.cpp" />
@@ -159,10 +158,7 @@
     <ClCompile Include="Dependencies\imgui\imgui_draw.cpp" />
     <ClCompile Include="Dependencies\imgui\imgui_tables.cpp" />
     <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="src\Events.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\Init.cpp" />
-    <ClCompile Include="src\GlobalVariables.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
@@ -185,11 +181,7 @@
     <ClInclude Include="Dependencies\imgui\backends\imgui_impl_win32.h" />
     <ClInclude Include="Dependencies\imgui\imgui.h" />
     <ClInclude Include="Dependencies\stb_image\stb_image.h" />
-    <ClInclude Include="src\Close.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="src\Events.hpp">
+    <ClInclude Include="src\Constants.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -202,6 +194,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="src\Render.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="src\Shader-Programs.hpp">
       <SubType>
       </SubType>
     </ClInclude>

@@ -15,13 +15,7 @@
 #ifdef _DEBUG
 #define DEBUG_ONLY(x) x
 #define GL_ERROR(x) x; \
-{ \
-	GLenum glError = glGetError(); \
-	if (glError) {	\
-		printf("OpenGl ERROR: %X\n", glError); \
-		__debugbreak(); \
-	} \
-}
+	if (glGetError()) __debugbreak()
 #else
 #define  DEBUG_ONLY(X)
 #define GL_ERROR(x) x

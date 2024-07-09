@@ -6,17 +6,16 @@
 #include <OpenGL-Manager.hpp>
 
 typedef BOOL(WINAPI* WGLSWAPINTERVALEXT)(int);
-extern BOOL(WINAPI* wglSwapIntervalEXT)(int);
 
-/// mam is short for manager
-namespace man {
+/// Man is short for manager
+namespace Man {
 
 	class Window {
 		HWND hwnd;
 		HDC dc;
 		HGLRC glrc;
-		int nCmdShow;
 		bool windowStatus = true;
+		BOOL(WINAPI* wglSwapIntervalEXT)(int);
 	public:
 		/**
 		* Creates the Window for OpenGL
@@ -26,7 +25,6 @@ namespace man {
 		* @param winProc write your own winProc function to manage events
 		*/
 		Window(HINSTANCE hInstance, int nCmdShow, int windowWidth, int windowHeight, const wchar_t* windowTitle, WNDPROC winProc)
-			: nCmdShow(nCmdShow)
 		{
 			SetProcessDPIAware();
 
@@ -41,7 +39,7 @@ namespace man {
 			UINT dpiX, dpiY;
 			GetDpiForMonitor(mntr, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
 
-			float scale = dpiX / 96.0;  
+			float scale = float(dpiX / 96.0);  
 			hwnd = CreateWindowEx(
 				0,
 				windowTitle,
@@ -60,6 +58,7 @@ namespace man {
 				windowStatus = false;
 				__debugbreak();
 			}
+
 			SetCursor(LoadCursor(NULL, IDC_ARROW));
 
 			PIXELFORMATDESCRIPTOR pfd;
@@ -97,17 +96,24 @@ namespace man {
 				__debugbreak();
 			}
 
+			wglSwapIntervalEXT = (WGLSWAPINTERVALEXT)wglGetProcAddress("wglSwapIntervalEXT");
 			wglSwapIntervalEXT(-1);
-
-			GL_ERROR(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 			GL_ERROR(glEnable(GL_DEPTH_TEST));
-			GL_ERROR(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+			GL_ERROR(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+			clearBuffer(); 
+			swapBuffers();
+			ShowWindow(hwnd, nCmdShow);
 		}
+		/// @return true = success, false = fail
+		bool getWindowStatus() { return windowStatus; }
+		void swapBuffers() { GL_ERROR(SwapBuffers(dc)); }
+		void clearBuffer() { GL_ERROR(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)); }
+
 		~Window() {
 			wglMakeCurrent(NULL, NULL);
 			wglDeleteContext(glrc);
 			ReleaseDC(hwnd, dc);
+			DestroyWindow(hwnd);
 		}
-		bool getWindowStatus() { return windowStatus; }
 	};
 }
