@@ -185,15 +185,15 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="src\GlobalVariables.hpp">
+    <ClInclude Include="Old\GlobalVariables.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="src\Init.hpp">
+    <ClInclude Include="Old\Init.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="src\Render.hpp">
+    <ClInclude Include="Old\Render.hpp">
       <SubType>
       </SubType>
     </ClInclude>

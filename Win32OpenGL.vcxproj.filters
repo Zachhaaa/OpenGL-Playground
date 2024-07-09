@@ -48,16 +48,16 @@
     <None Include="res\Shaders\Object-Shader.vert" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Init.hpp">
+    <ClInclude Include="Old\Init.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\GlobalVariables.hpp">
+    <ClInclude Include="Old\GlobalVariables.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\glad\include\glad\glad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Render.hpp">
+    <ClInclude Include="Old\Render.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\imgui\imgui.h">
