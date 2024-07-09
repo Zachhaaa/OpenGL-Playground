@@ -113,7 +113,7 @@ namespace Man {
 
 	protected: 
 		bool shaderStatus = true;
-		GLuint shdrID;
+		GLuint shdrID = 0;
 		GLint *uniLocs = nullptr;
 
 		void createTexture(const char* file, GLenum textureSlot,GLint wrapMethod) {

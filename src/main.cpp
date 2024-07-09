@@ -12,17 +12,9 @@ bool quit = false;
 LRESULT CALLBACK winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     switch (msg) {
     case WM_DESTROY:
-        PostQuitMessage(0);
 		quit = true;
         return 0;
-	case WM_QUIT:
-		quit = true;
-		return 0;
-	case WM_CLOSE: 
-		quit = true;
-		return 0;
     }
-
 
     return DefWindowProc(hwnd, msg, wParam, lParam);
 }
@@ -113,7 +105,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	lghtShdr.proj(proj); 
 	// NOTE: This and the light color need to sync between shaders.
 	lghtShdr.lightCol(glm::vec3(1.0f, 1.0f, 1.0f)); 
-
+	window.show();
 	MSG msg = {};
     while (true) {
         if (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -126,8 +118,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 		lghtShdr.bind();
 		geometry.render();
-
-
+		
         window.swapBuffers();
         window.clearBuffer();
     }
