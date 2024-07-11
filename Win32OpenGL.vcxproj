@@ -114,7 +114,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glad\include;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\imgui;$(SolutionDir)Dependencies\imgui\backends;$(SolutionDir)Dependencies\stb_image;$(SolutionDir)Custom-Dependencies\OpenGL-Manager;$(SolutionDir)Custom-Dependencies\Window-Manager</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glad\include;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\imgui;$(SolutionDir)Dependencies\imgui\backends;$(SolutionDir)Dependencies\stb_image;$(SolutionDir)Custom-Dependencies\OpenGL-Manager;$(SolutionDir)Custom-Dependencies\Window-Manager;$(SolutionDir)Custom-Dependencies\STL-Reader</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
@@ -158,6 +158,7 @@
     <ClCompile Include="Dependencies\imgui\imgui_draw.cpp" />
     <ClCompile Include="Dependencies\imgui\imgui_tables.cpp" />
     <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -172,6 +173,10 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Custom-Dependencies\STL-Reader\STL-Reader.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Custom-Dependencies\Window-Manager\Window-Manager.hpp">
       <SubType>
       </SubType>
@@ -181,19 +186,15 @@
     <ClInclude Include="Dependencies\imgui\backends\imgui_impl_win32.h" />
     <ClInclude Include="Dependencies\imgui\imgui.h" />
     <ClInclude Include="Dependencies\stb_image\stb_image.h" />
+    <ClInclude Include="src\App.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="src\Constants.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Old\GlobalVariables.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="Old\Init.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="Old\Render.hpp">
+    <ClInclude Include="src\Events.hpp">
       <SubType>
       </SubType>
     </ClInclude>

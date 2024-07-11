@@ -36,7 +36,7 @@ public:
 		if (!shaderStatus) { __debugbreak(); return; }
 		materialColorTextureLoc(0);
 
-		createTexture("res/Textures/Crate.png", GL_TEXTURE1, GL_REPEAT);
+		createTexture("res/Textures/Crate-Specular.png", GL_TEXTURE1, GL_REPEAT);
 		if (!shaderStatus) { __debugbreak(); return; }
 		materialSpecularTextureLoc(1);
 	}

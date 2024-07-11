@@ -13,6 +13,6 @@ uniform mat4 u_Model, u_View, u_Proj;
 void main() {
 	gl_Position = u_Proj * u_View * u_Model * vec4(aPos, 1.0);
 	FragPos = vec3(u_Model * vec4(aPos, 1.0));
-	Normal = aNormal;
+	Normal = vec3(u_Model * vec4(aNormal, 0.0));
 	TexCoord = aTexCoord;
 }

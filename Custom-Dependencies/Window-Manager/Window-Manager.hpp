@@ -5,6 +5,10 @@
 #include <glad/glad.h>
 #include <OpenGL-Manager.hpp>
 
+#include <imgui.h>
+#include <imgui_impl_win32.h>
+#include <imgui_impl_opengl3.h>
+
 typedef BOOL(WINAPI* WGLSWAPINTERVALEXT)(int);
 
 /// Man is short for manager
@@ -41,15 +45,15 @@ namespace Man {
 			HMONITOR mntr = MonitorFromPoint({ 0, 0 }, MONITOR_DEFAULTTOPRIMARY);
 			UINT dpiX, dpiY;
 			GetDpiForMonitor(mntr, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
+			float scale = float(dpiX / 96.0);
 
-			float scale = float(dpiX / 96.0);  
 			hwnd = CreateWindowEx(
 				0,
 				windowTitle,
 				windowTitle,
 				WS_OVERLAPPEDWINDOW,
-				CW_USEDEFAULT,
-				CW_USEDEFAULT,
+				300,
+				300,
 				int(windowWidth * scale),
 				int(windowHeight * scale),
 				NULL,
@@ -107,6 +111,22 @@ namespace Man {
 			wglSwapIntervalEXT(-1);
 			GL_ERROR(glEnable(GL_DEPTH_TEST));
 			GL_ERROR(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+
+
+			IMGUI_CHECKVERSION();
+			ImGui::CreateContext();
+			ImGuiIO& io = ImGui::GetIO();
+			io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+			io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+			io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+			ImGui_ImplWin32_Init(hwnd);
+			ImGui_ImplOpenGL3_Init();
+
+			io.Fonts->Clear();
+			io.Fonts->AddFontFromFileTTF("C:/Windows/Fonts/arial.ttf", scale * 16.0f);
+			io.Fonts->Build();
+
 		}
 		/// @return true = success, false = fail
 		void show() { ShowWindow(hwnd, nCmdShow); }

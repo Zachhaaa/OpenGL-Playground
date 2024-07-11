@@ -3,8 +3,10 @@
 #include <Windows.h>
 #include <glad/glad.h>
 
-#define STB_IMAGE_IMPLEMENTATION
+#include <glm/glm.hpp>
+
 #include <stb_image.h>
+#include <stdio.h>
 
 #ifdef _DEBUG
 #define GL_ERROR(x) x; \
@@ -13,11 +15,18 @@
 #define GL_ERROR(x) x
 #endif
 
+const GLint vertexAttribSizes[] = {3, 3, 2};
+struct Vertex {
+	glm::vec3 pos;
+	glm::vec3 normal;
+	glm::vec2 textureCoord;
+};
+
 namespace Man {
 	class Geometry {
 		GLsizei m_NumTriangles;
 	public:
-		Geometry(float vertexData[], GLint attribSizes[], const unsigned numAttribs, GLsizei m_NumTriangles)
+		Geometry(Vertex vertexData[], GLsizei m_NumTriangles)
 			: m_NumTriangles(m_NumTriangles)
 		{
 			GLuint vertexBuffer, vertexArray;
@@ -27,18 +36,13 @@ namespace Man {
 
 			GL_ERROR(glGenBuffers(1, &vertexBuffer));
 			GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer));
-			GLint* end = attribSizes + numAttribs;
-			GLsizei vertexSize = 0;
-			for (GLint* ptr = attribSizes; ptr < end; ++ptr) {
-				vertexSize += *ptr;
-			}
-			vertexSize *= sizeof(float);
-			glBufferData(GL_ARRAY_BUFFER, m_NumTriangles * vertexSize, vertexData, GL_STATIC_DRAW);
+		
+			glBufferData(GL_ARRAY_BUFFER, m_NumTriangles * sizeof(Vertex), vertexData, GL_STATIC_DRAW);
 			GLint offset = 0;
-			for (unsigned i = 0; i < numAttribs; ++i) {
-				GL_ERROR(glVertexAttribPointer(i, attribSizes[i], GL_FLOAT, GL_FALSE, vertexSize, (void*)(offset * sizeof(float))));
+			for (unsigned i = 0; i < sizeof(vertexAttribSizes) / sizeof(GLint); ++i) {
+				GL_ERROR(glVertexAttribPointer(i, vertexAttribSizes[i], GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offset * sizeof(float))));
 				GL_ERROR(glEnableVertexAttribArray(i));
-				offset += attribSizes[i];
+				offset += vertexAttribSizes[i];
 			}
 		}
 		void render() { GL_ERROR(glDrawArrays(GL_TRIANGLES, 0, m_NumTriangles)); }
