@@ -1,0 +1,3 @@
+Make sure anything nahimic related is not running in the background. If it is running ,it causes the app to crash when resizing on the corners of the window.
+
+To check this, just open task manager and search nahimic and disable any tasks related as such. Make sure it stays disabled.
