@@ -45,6 +45,21 @@
     <ClCompile Include="src\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Custom-Dependencies\STL-Reader\STL-Reader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Custom-Dependencies\OpenGL-Manager\OpenGL-Manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Custom-Dependencies\Window-Manager\Window-Manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Custom-Dependencies\Performance-Timer\Performance-Timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Custom-Dependencies\Performance-Timer\Timers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
@@ -81,10 +96,16 @@
     <ClInclude Include="src\App.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Events.hpp">
+    <ClInclude Include="src\Events-Render.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Custom-Dependencies\STL-Reader\STL-Reader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Custom-Dependencies\Performance-Timer\Performance-Timer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Custom-Dependencies\Performance-Timer\Timers.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

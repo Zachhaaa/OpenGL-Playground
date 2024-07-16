@@ -9,6 +9,3 @@ constexpr long c_WindowMinHeight = 300;
 constexpr float c_DefaultFOV = 45.0f;
 constexpr float c_NearClippingDistance = 0.1f; 
 constexpr float c_FarClippingDistance = 100.0f;
-
-constexpr double c_MoveSpeed = 0.002;
-constexpr double c_MouseSensitiviy = 0.0025;
