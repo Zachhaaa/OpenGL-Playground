@@ -9,8 +9,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	App app(hInstance, nCmdShow);
 	if (!app.getAppStatus()) { return 1; }
 
-	app.window.show();
-
 	app.run(); 
 
 	return 0;  

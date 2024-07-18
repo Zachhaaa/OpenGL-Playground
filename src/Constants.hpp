@@ -1,7 +1,7 @@
 #pragma once
 
-constexpr int c_WindowWidth = 1500;
-constexpr int c_WindowHeight = 900;
+constexpr int c_WindowWidth = 1600;
+constexpr int c_WindowHeight = 1000;
 constexpr long c_WindowMinWidth = 300;
 constexpr long c_WindowMinHeight = 300;
 

@@ -1,4 +1,4 @@
-#version 330 core
+#version 460 core
 
 layout (location = 0) in vec3 aPos;
 uniform mat4 u_Model, u_View, u_Proj;

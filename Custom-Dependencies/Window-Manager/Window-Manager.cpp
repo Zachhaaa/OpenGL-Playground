@@ -16,16 +16,20 @@ Man::Window::Window(HINSTANCE hInstance, int nCmdShow, int windowWidth, int wind
 	UINT dpiX, dpiY;
 	GetDpiForMonitor(mntr, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
 	float scale = float(dpiX / 96.0);
+	windowWidth = windowWidth * scale;
+	windowHeight = windowHeight * scale;
+	int startPosX = 0.5 * (GetSystemMetrics(SM_CXSCREEN) - windowWidth);
+	int startPosY = 0.5 * (GetSystemMetrics(SM_CYSCREEN) - windowHeight);
 
 	hwnd = CreateWindowEx(
 		0,
 		windowTitle,
 		windowTitle,
 		WS_OVERLAPPEDWINDOW,
-		300,
-		300,
-		int(windowWidth * scale),
-		int(windowHeight * scale),
+		startPosX,
+		startPosY,
+		windowWidth,
+		windowHeight,
 		NULL,
 		NULL,
 		hInstance,

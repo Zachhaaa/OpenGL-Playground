@@ -69,6 +69,27 @@ public:
 		meshFile(L"res/Meshes/Cable Reel(binary).stl"),
 		mesh((float*)meshFile.vertices.data(), meshFile.vertices.size(), StlVertexAttribSizes, 2, sizeof(StlVertex))
 	{
+		//TODO organize this code
+		// {
+		/*
+		GLuint fbo;
+		glGenFramebuffers(1, &fbo);
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+		unsigned int texture; 
+		glGenTextures(1, &texture);
+		glBindTexture()
+
+		glTextImage2D(GL_TEXTURE_2D, 0 GL_RGBA, )
+
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+			appStatus = false; 
+			__debugbreak();
+			return;
+		}
+		*/
+		// }
+
 		if (
 			!window.getWindowStatus() ||
 			!stlShdr.getShaderStatus()
@@ -79,10 +100,15 @@ public:
 		else {
 			appStatus = true;
 		}
-		stlShdr.bind();
-	}
 
+		stlShdr.bind();
+		window.show(); 
+	}
+	
 	bool getAppStatus() { return appStatus; }
+
+	/// After Initializing via the constructor all code is executed through the winProc.
+	/// Rendering is handled in winProc -> WM_PAINT
 	void run() {
 		MSG msg = {};
 		while (GetMessage(&msg, NULL, 0, 0) > 0) {

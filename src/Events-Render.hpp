@@ -134,8 +134,6 @@ inline void render() {
 	glm::mat4 model = glm::translate(aPtr->orbit, aPtr->cratePos);
 	// Viewport Rendering
 
-	// TODO: measure the time it takes to clear the buffer to see if it might add input lag.
-
 	aPtr->stlShdr.model(model);
 	glm::mat4 view = glm::eulerAngleXY(aPtr->cameraAngle.x, aPtr->cameraAngle.y);
 	view = glm::translate(view, aPtr->cameraPos); 

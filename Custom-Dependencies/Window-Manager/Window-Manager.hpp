@@ -19,6 +19,8 @@ namespace Man {
 		HDC dc;
 		HGLRC glrc;
 		int nCmdShow;
+		int windowWidth;
+		int windowHeight; 
 		bool windowStatus = true;
 		BOOL(WINAPI* wglSwapIntervalEXT)(int);
 
@@ -39,6 +41,8 @@ namespace Man {
 		void clearBuffer() { GL_ERROR(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT)); }
 		void setSwapInterval(int a) { wglSwapIntervalEXT(a); }
 		HWND getHwnd() { return hwnd; }
+		int  getWindowWidth() { return windowWidth; }
+		int  getWindowHeight() { return windowHeight; }
 
 		~Window() {
 			wglMakeCurrent(NULL, NULL);
