@@ -6,7 +6,6 @@
 #include <STL-Reader.hpp>
 #include <Window-Manager.hpp>
 #include "Shader-Programs.hpp"
-#include <chrono>
 
 #include "Constants.hpp"
 
@@ -17,12 +16,21 @@ struct Material {
 };
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+
 LRESULT CALLBACK winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+class AppPtr {
+public:
+	AppPtr(void* ptr);
+};
+
 class App {
-	bool appStatus = true;
+	bool appStatus = false;
 public: 
 	HINSTANCE instance;
+
+	AppPtr ap;
 	Man::Window window;
 	
 	int swapInterval = -1;
@@ -54,9 +62,9 @@ public:
 	float sina = 0.0f, cosa = 1.0f;
 	ULONGLONG prevTime = GetTickCount64();
 
-	App(HINSTANCE hInstance, int nCmdShow)
-		:
+	App(HINSTANCE hInstance, int nCmdShow) :
 		instance(hInstance),
+		ap(this),
 		window(hInstance, nCmdShow, c_WindowWidth, c_WindowHeight, L"Opengl Sandbox", winProc),
 		meshFile(L"res/Meshes/Cable Reel(binary).stl"),
 		mesh((float*)meshFile.vertices.data(), meshFile.vertices.size(), StlVertexAttribSizes, 2, sizeof(StlVertex))
@@ -67,6 +75,9 @@ public:
 			) {
 			appStatus = false;
 			return;
+		}
+		else {
+			appStatus = true;
 		}
 		stlShdr.bind();
 	}

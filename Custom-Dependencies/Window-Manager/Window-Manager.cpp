@@ -79,12 +79,11 @@ Man::Window::Window(HINSTANCE hInstance, int nCmdShow, int windowWidth, int wind
 
 	wglSwapIntervalEXT = (WGLSWAPINTERVALEXT)wglGetProcAddress("wglSwapIntervalEXT");
 	wglSwapIntervalEXT(-1);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
+	GL_ERROR(glEnable(GL_CULL_FACE));
+	GL_ERROR(glCullFace(GL_BACK));
+	GL_ERROR(glFrontFace(GL_CCW));
 	GL_ERROR(glEnable(GL_DEPTH_TEST));
-	GL_ERROR(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
-
+	GL_ERROR(glClearColor(0.0f, 0.0f, 0.0f, 0.1f));
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -100,4 +99,13 @@ Man::Window::Window(HINSTANCE hInstance, int nCmdShow, int windowWidth, int wind
 	io.Fonts->AddFontFromFileTTF("C:/Windows/Fonts/arial.ttf", scale * 16.0f);
 	io.Fonts->Build();
 
+	//RECT rcClient;
+	//GetWindowRect(hwnd, &rcClient);
+
+	//// Inform the application of the frame change.
+	//SetWindowPos(hwnd,
+	//	NULL,
+	//	rcClient.left, rcClient.top,
+	//	rcClient.left - rcClient.right, rcClient.bottom - rcClient.top,
+	//	SWP_FRAMECHANGED);
 }

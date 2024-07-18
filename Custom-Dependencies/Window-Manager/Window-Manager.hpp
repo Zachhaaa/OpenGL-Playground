@@ -18,9 +18,9 @@ namespace Man {
 		HWND hwnd;
 		HDC dc;
 		HGLRC glrc;
-		BOOL(WINAPI* wglSwapIntervalEXT)(int);
 		int nCmdShow;
 		bool windowStatus = true;
+		BOOL(WINAPI* wglSwapIntervalEXT)(int);
 
 	public:
 		/**
