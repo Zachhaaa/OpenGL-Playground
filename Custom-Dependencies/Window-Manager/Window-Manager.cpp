@@ -1,6 +1,11 @@
 #include "Window-Manager.hpp"
 
-Man::Window::Window(HINSTANCE hInstance, int nCmdShow, int windowWidth, int windowHeight, const wchar_t* windowTitle, WNDPROC winProc)
+/// To maximize a window, set percentSize = 1.0
+/// @param hInstace WinMain hIstance
+/// @param nCmdShow WinMain nCmdShow
+/// @param aspectRatio Window aspect ratio (width / height)
+/// @param percentSize = MonitorWidth(px) * percentSize or MonitorWidth(px) * percentSize. Smaller value is used and the other width is calculated based on the aspect ratio. 1.0 maximizes the window and aspect ratio is ignored.
+Man::Window::Window(HINSTANCE hInstance, int nCmdShow, const wchar_t* windowTitle, WNDPROC winProc, float aspectRatio, float percentSize)
 	: nCmdShow(nCmdShow)
 {
 	SetProcessDPIAware();
@@ -16,10 +21,19 @@ Man::Window::Window(HINSTANCE hInstance, int nCmdShow, int windowWidth, int wind
 	UINT dpiX, dpiY;
 	GetDpiForMonitor(mntr, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
 	float scale = float(dpiX / 96.0);
-	windowWidth = windowWidth * scale;
-	windowHeight = windowHeight * scale;
-	int startPosX = 0.5 * (GetSystemMetrics(SM_CXSCREEN) - windowWidth);
-	int startPosY = 0.5 * (GetSystemMetrics(SM_CYSCREEN) - windowHeight);
+
+	int mntrWidth  = GetSystemMetrics(SM_CXSCREEN);
+	int mntrHeight = GetSystemMetrics(SM_CYSCREEN);
+	if (mntrWidth > mntrHeight) {
+		windowHeight = percentSize * mntrHeight;
+		windowWidth = aspectRatio  * windowHeight;
+	}
+	else {
+		windowWidth = percentSize * mntrWidth;
+		windowHeight = windowWidth / aspectRatio; 
+	}
+	int startPosX = 0.5 * (mntrWidth  - windowWidth);
+	int startPosY = 0.5 * (mntrHeight - windowHeight);
 
 	hwnd = CreateWindowEx(
 		0,

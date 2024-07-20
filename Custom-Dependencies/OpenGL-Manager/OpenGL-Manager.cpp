@@ -3,7 +3,6 @@
 Man::Geometry::Geometry(float* vertexData, GLsizei m_NumVertices, int attribSizes[], unsigned numAttribs, unsigned vertexSize)
 	: m_NumVertices(m_NumVertices), vertexSize(vertexSize)
 {
-
 	GL_ERROR(glGenVertexArrays(1, &vertexArray));
 	GL_ERROR(glBindVertexArray(vertexArray));
 
@@ -131,4 +130,36 @@ void Man::ShaderProgram::createProgram(const wchar_t* vertexShaderFile, const wc
 		*loc = getUniform(*uniformNames);
 	}
 
+}
+
+Man::FrameBuffer::FrameBuffer(int widthIn, int heightIn) : width(widthIn), height(heightIn) {
+	GL_ERROR(glGenFramebuffers(1, &fbID));
+	GL_ERROR(glBindFramebuffer(GL_FRAMEBUFFER, fbID));
+	
+	GL_ERROR(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+
+	GL_ERROR(glGenTextures(1, &texID));
+	GL_ERROR(glActiveTexture(GL_TEXTURE0));
+	GL_ERROR(glBindTexture(GL_TEXTURE_2D, texID));
+
+	GL_ERROR(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+	GL_ERROR(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+
+	GL_ERROR(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height , 0, GL_RGB, GL_UNSIGNED_BYTE, NULL));
+
+	GL_ERROR(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texID, 0));
+
+	GLuint rbo;
+	GL_ERROR(glGenRenderbuffers(1, &rbo));
+	GL_ERROR(glBindRenderbuffer(GL_RENDERBUFFER, rbo));
+
+	GL_ERROR(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height));
+	GL_ERROR(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo));
+	GL_ERROR(glBindRenderbuffer(GL_RENDERBUFFER, 0));
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		fbStatus = false;
+		__debugbreak();
+		return;
+	} 
 }

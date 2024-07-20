@@ -32,6 +32,8 @@ public:
 
 	AppPtr ap;
 	Man::Window window;
+
+	Man::FrameBuffer viewport;
 	
 	int swapInterval = -1;
 	int prevSwapInterval = swapInterval;
@@ -50,8 +52,6 @@ public:
 
 	glm::vec3 cameraPos = { 0.0f, -1.0f, -10.0f };
 	glm::vec2 cameraAngle = { 0.0f, 0.0f };
-	glm::mat4 proj;
-	glm::mat4 view = glm::translate(glm::mat4(1.0f), cameraPos);
 	glm::vec3 g_LightCol = { 1.0f, 1.0f, 1.0f };
 	glm::vec3 g_LightPos = { 20.0f, 20.0f, 30.0f };
 	glm::mat4 orbit = glm::mat4(1.0f); 
@@ -65,34 +65,15 @@ public:
 	App(HINSTANCE hInstance, int nCmdShow) :
 		instance(hInstance),
 		ap(this),
-		window(hInstance, nCmdShow, c_WindowWidth, c_WindowHeight, L"Opengl Sandbox", winProc),
+		window(hInstance, nCmdShow, L"OpenGL Sandbox", winProc, 1.5, 0.85),
+		viewport(window.getWindowWidth() - 300, window.getWindowHeight() - 300),
 		meshFile(L"res/Meshes/Cable Reel(binary).stl"),
 		mesh((float*)meshFile.vertices.data(), meshFile.vertices.size(), StlVertexAttribSizes, 2, sizeof(StlVertex))
 	{
-		//TODO organize this code
-		// {
-		/*
-		GLuint fbo;
-		glGenFramebuffers(1, &fbo);
-		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-		unsigned int texture; 
-		glGenTextures(1, &texture);
-		glBindTexture()
-
-		glTextImage2D(GL_TEXTURE_2D, 0 GL_RGBA, )
-
-		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-			appStatus = false; 
-			__debugbreak();
-			return;
-		}
-		*/
-		// }
-
 		if (
 			!window.getWindowStatus() ||
-			!stlShdr.getShaderStatus()
+			!stlShdr.getShaderStatus() ||
+			!viewport.getStatus()
 			) {
 			appStatus = false;
 			return;

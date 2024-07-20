@@ -61,4 +61,22 @@ namespace Man {
 			if(uniLocs) delete[] uniLocs; 
 		}
 	};
+	class FrameBuffer {
+		GLuint fbID; 
+		GLuint texID;
+		bool fbStatus = true;
+	public:
+		int width, height; 
+		FrameBuffer(int widthIn, int heightIn);
+
+		bool getStatus() { return fbStatus; }
+		GLuint getTexID() { return texID;  }
+
+		void bind() { GL_ERROR(glBindFramebuffer(GL_FRAMEBUFFER, fbID)); }
+		/// render calls will now render to the default buffer.
+		void unbind() { GL_ERROR(glBindFramebuffer(GL_FRAMEBUFFER, 0)); }
+		// fb must be bound
+		void clear() { GL_ERROR(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)); }
+		~FrameBuffer() { glDeleteFramebuffers(1, &fbID); }
+	};
 }

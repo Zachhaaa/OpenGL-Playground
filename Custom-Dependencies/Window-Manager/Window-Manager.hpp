@@ -32,8 +32,8 @@ namespace Man {
 		* @param nCmdShow use from WinMain parameter
 		* @param winProc write your own winProc function to manage events
 		*/
-		Window(HINSTANCE hInstance, int nCmdShow, int windowWidth, int windowHeight, const wchar_t* windowTitle, WNDPROC winProc);
-		
+		Window(HINSTANCE hInstance, int nCmdShow, const wchar_t* windowTitle, WNDPROC winProc, float aspectRatio, float percentSize);
+
 		void show() { ShowWindow(hwnd, nCmdShow); }
 		/// @return true = success, false = fail
 		bool getWindowStatus() { return windowStatus; }

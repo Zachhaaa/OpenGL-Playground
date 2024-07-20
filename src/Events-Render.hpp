@@ -7,80 +7,98 @@
 
 #include <Timers.hpp>
 
+
+
 inline void windowResize(LPARAM lParam) {
 	if (lParam == 0) return;
 	GL_ERROR(glViewport(0, 0, LOWORD(lParam), HIWORD(lParam)));
-	aPtr->proj = glm::perspective(
-		glm::radians(c_DefaultFOV),
-		(float)LOWORD(lParam) / HIWORD(lParam),
-		c_NearClippingDistance,
-		c_FarClippingDistance
-	);
-	aPtr->stlShdr.proj(aPtr->proj);
 }
 inline void MyImGui() {
 	ImGui::SetNextWindowSize(ImVec2(600, 600), ImGuiCond_Once);
-	ImGui::Begin("Debug Menu");
-	ImGuiIO& io = ImGui::GetIO();
-	ImGui::Text("FPS: %f", io.Framerate); 
-	ImGui::Text("CameraPos: (%f, %f, %f)", aPtr->cameraPos.x, aPtr->cameraPos.y, aPtr->cameraPos.z);
-	ImGui::Text("CameraAngle: (%f, %f)", aPtr->cameraAngle.x, aPtr->cameraAngle.y);
+	
+	if (ImGui::Begin("Debug Menu")) {
+		ImGuiIO& io = ImGui::GetIO();
+		ImGui::Text("FPS: %f", io.Framerate);
+		ImGui::Text("CameraPos: (%f, %f, %f)", aPtr->cameraPos.x, aPtr->cameraPos.y, aPtr->cameraPos.z);
+		ImGui::Text("CameraAngle: (%f, %f)", aPtr->cameraAngle.x, aPtr->cameraAngle.y);
 
-	ImGui::ColorPicker3("Light Color", (float*)&aPtr->g_LightCol);
-	ImGui::SliderFloat3("Light Position", (float*)&aPtr->g_LightPos, -10.0f, 10.0f);
-	ImGui::Text("Object sdSettings");
-	ImGui::SliderFloat("Ambient", &aPtr->crate.Mambient, 0.0f, 1.0f);
-	ImGui::SliderFloat("Diffuse", &aPtr->crate.Mdiffuse, 0.0f, 1.0f);
-	ImGui::SliderFloat("Specular", &aPtr->crate.Mspecular, 0.0f, 1.0f);
-	aPtr->crate.Mshininess = pow(2.0, (double)aPtr->shineExponent);
-	char format[20];
-	sprintf_s(format, 20, "%.1f", aPtr->crate.Mshininess);
-	ImGui::SliderInt("Shininess", &aPtr->shineExponent, 0, 11, format);
-	ImGui::SliderFloat3("Crate Position", (float*)&aPtr->cratePos, -10.0f, 10.0f);
-	ImGui::SliderAngle("Smooth Cutoff Angle", &aPtr->smoothCutoffAngle, 0.0f, 180.0f);
-	if (aPtr->smoothCutoffAngle != aPtr->prevSmoothCutoffAngle) {
-		if (aPtr->smoothCutoffAngle == 0.0f) aPtr->mesh.subAllData((float*)aPtr->meshFile.vertices.data());
-		else {
-			PerfTimer a;
+		ImGui::ColorPicker3("Light Color", (float*)&aPtr->g_LightCol);
+		ImGui::SliderFloat3("Light Position", (float*)&aPtr->g_LightPos, -10.0f, 10.0f);
+		ImGui::Text("Object Settings");
+		ImGui::SliderFloat("Ambient", &aPtr->crate.Mambient, 0.0f, 1.0f);
+		ImGui::SliderFloat("Diffuse", &aPtr->crate.Mdiffuse, 0.0f, 1.0f);
+		ImGui::SliderFloat("Specular", &aPtr->crate.Mspecular, 0.0f, 1.0f);
+		aPtr->crate.Mshininess = pow(2.0, (double)aPtr->shineExponent);
+		char format[20];
+		sprintf_s(format, 20, "%.1f", aPtr->crate.Mshininess);
+		ImGui::SliderInt("Shininess", &aPtr->shineExponent, 0, 11, format);
+		ImGui::SliderFloat3("Crate Position", (float*)&aPtr->cratePos, -10.0f, 10.0f);
+		ImGui::SliderAngle("Smooth Cutoff Angle", &aPtr->smoothCutoffAngle, 0.0f, 180.0f);
+		if (aPtr->smoothCutoffAngle != aPtr->prevSmoothCutoffAngle) {
+			if (aPtr->smoothCutoffAngle == 0.0f) aPtr->mesh.subAllData((float*)aPtr->meshFile.vertices.data());
+			else {
+				PerfTimer a;
 
-			PerfTimer b;
-			aPtr->smoothedMesh = aPtr->meshFile;
-			timers.cutoffAngleCopy = b.elapsed();
+				PerfTimer b;
+				aPtr->smoothedMesh = aPtr->meshFile;
+				timers.cutoffAngleCopy = b.elapsed();
 
-			PerfTimer c;
-			aPtr->smoothedMesh.visualSmooth(aPtr->smoothCutoffAngle);
-			timers.cutoffAngleSmooth = c.elapsed();
+				PerfTimer c;
+				aPtr->smoothedMesh.visualSmooth(aPtr->smoothCutoffAngle);
+				timers.cutoffAngleSmooth = c.elapsed();
 
-			PerfTimer d;
-			aPtr->mesh.subAllData((float*)aPtr->smoothedMesh.vertices.data());
-			timers.cutoffAngleSubData = d.elapsed();
+				PerfTimer d;
+				aPtr->mesh.subAllData((float*)aPtr->smoothedMesh.vertices.data());
+				timers.cutoffAngleSubData = d.elapsed();
 
-			timers.cutoffAngleChange = a.elapsed(); 
+				timers.cutoffAngleChange = a.elapsed();
+			}
+			aPtr->prevSmoothCutoffAngle = aPtr->smoothCutoffAngle;
 		}
-		aPtr->prevSmoothCutoffAngle = aPtr->smoothCutoffAngle;
-	}
 
-	ImGui::Text("Control Settings");
-	ImGui::SliderFloat("Mouse Sensitivity", &aPtr->mouseSensitivity, 0.0001, 0.01); 
-	ImGui::SliderFloat("Move Speed", &aPtr->moveSpeed, 0.001, 0.01); 
-	ImGui::SliderInt("Swap Interval", &aPtr->swapInterval, -1, 10);
-	if (aPtr->swapInterval != aPtr->prevSwapInterval) {
-		aPtr->window.setSwapInterval(aPtr->swapInterval);
-		aPtr->prevSwapInterval = aPtr->swapInterval;
+		ImGui::Text("Control Settings");
+		ImGui::SliderFloat("Mouse Sensitivity", &aPtr->mouseSensitivity, 0.0001, 0.01);
+		ImGui::SliderFloat("Move Speed", &aPtr->moveSpeed, 0.001, 0.01);
+		ImGui::SliderInt("Swap Interval", &aPtr->swapInterval, -1, 10);
+		if (aPtr->swapInterval != aPtr->prevSwapInterval) {
+			aPtr->window.setSwapInterval(aPtr->swapInterval);
+			aPtr->prevSwapInterval = aPtr->swapInterval;
+		}
 	}
-
 	ImGui::End();
+	
 
 	ImGui::SetNextWindowSize(ImVec2(600, 600), ImGuiCond_Once);
 
-	ImGui::Begin("Timers");
+	if (ImGui::Begin("Timers")) {
 
-	ImGui::Text("Cutoof Angle Change     %f", timers.cutoffAngleChange);
-	ImGui::Text("Cutoof Angle Copy       %f", timers.cutoffAngleCopy);
-	ImGui::Text("Cutoof Angle Smooth     %f", timers.cutoffAngleSmooth);
-	ImGui::Text("Cutoof Angle SubData    %f", timers.cutoffAngleSubData);
-	ImGui::Text("Clear Buffer Time       %f", timers.clearBufferTime);
+		ImGui::Text("Cutoof Angle Change     %f", timers.cutoffAngleChange);
+		ImGui::Text("Cutoof Angle Copy       %f", timers.cutoffAngleCopy);
+		ImGui::Text("Cutoof Angle Smooth     %f", timers.cutoffAngleSmooth);
+		ImGui::Text("Cutoof Angle SubData    %f", timers.cutoffAngleSubData);
+		ImGui::Text("Clear Buffer Time       %f", timers.clearBufferTime);
+	}
 	ImGui::End();
+
+	if (ImGui::Begin("Viewport")) {
+		ImVec2 windowSize = ImGui::GetWindowSize();
+		// TODO: Figure out how to accurately subtract the size of the title bar.
+		aPtr->viewport.width  = windowSize.x;
+		aPtr->viewport.height = windowSize.y - 45;
+		glm::mat4 proj = glm::perspective(
+			glm::radians(c_DefaultFOV),
+			windowSize.x / (windowSize.y - 45),
+			c_NearClippingDistance,
+			c_FarClippingDistance
+		);
+		aPtr->stlShdr.proj(proj);
+		ImGui::Image(
+			(void*)(intptr_t)aPtr->viewport.getTexID(),
+			ImVec2(aPtr->viewport.width, aPtr->viewport.height)
+		);
+	}
+	ImGui::End(); 
+	
 
 }
 glm::vec2 operator*(float c, ImVec2& a) { return glm::vec2(c * a.x, c * a.y); }
@@ -91,16 +109,6 @@ inline float length(const ImVec2& v) {
 }
 
 inline void render() {
-
-	//Frame Input from Events
-	// ImGui Rendering
-
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-	ImGui::ShowDemoWindow();
-
-	MyImGui(); 
 
 	ULONGLONG currTime = GetTickCount64();
 	float posDiff = aPtr->moveSpeed * (currTime - aPtr->prevTime);
@@ -126,13 +134,18 @@ inline void render() {
 	aPtr->cameraPos.x += -(aPtr->cosa * keyVec.x + aPtr->sina * keyVec.y);
 	aPtr->cameraPos.z += (aPtr->cosa * keyVec.y - aPtr->sina * keyVec.x);
 
-	if (ImGui::IsKeyDown(ImGuiKey_MouseRight)) {
-		ImGuiIO& io = ImGui::GetIO(); 
-		aPtr->orbit = aPtr->orbit * glm::eulerAngleY(aPtr->mouseSensitivity * io.MouseDelta.x) ;
-		aPtr->orbit = glm::eulerAngleX(aPtr->mouseSensitivity * io.MouseDelta.y) * aPtr->orbit;
-	}
+	ImGuiIO& io = ImGui::GetIO();
+	aPtr->orbit = aPtr->orbit * glm::eulerAngleY(aPtr->mouseSensitivity * io.MouseDelta.x);
+	aPtr->orbit = glm::eulerAngleX(-aPtr->mouseSensitivity * io.MouseDelta.y) * aPtr->orbit;
+
 	glm::mat4 model = glm::translate(aPtr->orbit, aPtr->cratePos);
+
 	// Viewport Rendering
+	aPtr->viewport.bind();
+
+	GL_ERROR(glViewport(0, 0, aPtr->viewport.width, aPtr->viewport.height));
+
+	aPtr->viewport.clear(); 
 
 	aPtr->stlShdr.model(model);
 	glm::mat4 view = glm::eulerAngleXY(aPtr->cameraAngle.x, aPtr->cameraAngle.y);
@@ -149,9 +162,22 @@ inline void render() {
 
 	aPtr->mesh.render();
 
-	ImGui::Render();
+	aPtr->viewport.unbind();
 
-	
+	//Frame Input from Events
+	// ImGui Rendering
+
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
+	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+
+	ImGui::ShowDemoWindow();
+
+	MyImGui(); 
+
+	ImGui::Render();
 
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
