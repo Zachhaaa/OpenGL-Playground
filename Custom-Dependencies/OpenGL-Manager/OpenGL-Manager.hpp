@@ -64,11 +64,14 @@ namespace Man {
 	class FrameBuffer {
 		GLuint fbID; 
 		GLuint texID;
+		// const because framebuffer resizing requires recreating the framebuffer
+		const int width, height; 
 		bool fbStatus = true;
 	public:
-		int width, height; 
 		FrameBuffer(int widthIn, int heightIn);
 
+		int getWidth() { return width; }
+		int getHeight() { return height; }
 		bool getStatus() { return fbStatus; }
 		GLuint getTexID() { return texID;  }
 

@@ -7,12 +7,6 @@
 
 #include <Timers.hpp>
 
-
-
-inline void windowResize(LPARAM lParam) {
-	if (lParam == 0) return;
-	GL_ERROR(glViewport(0, 0, LOWORD(lParam), HIWORD(lParam)));
-}
 inline void MyImGui() {
 	ImGui::SetNextWindowSize(ImVec2(600, 600), ImGuiCond_Once);
 	
@@ -21,6 +15,7 @@ inline void MyImGui() {
 		ImGui::Text("FPS: %f", io.Framerate);
 		ImGui::Text("CameraPos: (%f, %f, %f)", aPtr->cameraPos.x, aPtr->cameraPos.y, aPtr->cameraPos.z);
 		ImGui::Text("CameraAngle: (%f, %f)", aPtr->cameraAngle.x, aPtr->cameraAngle.y);
+		ImGui::Text("Viewport size: (%i, %i)", aPtr->viewport.getWidth(), aPtr->viewport.getWidth());
 
 		ImGui::ColorPicker3("Light Color", (float*)&aPtr->g_LightCol);
 		ImGui::SliderFloat3("Light Position", (float*)&aPtr->g_LightPos, -10.0f, 10.0f);
@@ -83,18 +78,20 @@ inline void MyImGui() {
 	if (ImGui::Begin("Viewport")) {
 		ImVec2 windowSize = ImGui::GetWindowSize();
 		// TODO: Figure out how to accurately subtract the size of the title bar.
-		aPtr->viewport.width  = windowSize.x;
-		aPtr->viewport.height = windowSize.y - 45;
+		windowSize.x -= 20;
+		windowSize.y -= 45; 
 		glm::mat4 proj = glm::perspective(
 			glm::radians(c_DefaultFOV),
-			windowSize.x / (windowSize.y - 45),
+			windowSize.x / windowSize.y,
 			c_NearClippingDistance,
 			c_FarClippingDistance
 		);
 		aPtr->stlShdr.proj(proj);
 		ImGui::Image(
 			(void*)(intptr_t)aPtr->viewport.getTexID(),
-			ImVec2(aPtr->viewport.width, aPtr->viewport.height)
+			windowSize, 
+			ImVec2(0, 1), 
+			ImVec2(1, 0)
 		);
 	}
 	ImGui::End(); 
@@ -122,7 +119,7 @@ inline void render() {
 	if (ImGui::IsKeyDown(ImGuiKey_LeftShift)) aPtr->cameraPos.y += posDiff;
 
 
-	if (ImGui::IsKeyDown(ImGuiKey_MouseMiddle)) {
+	if (ImGui::IsKeyDown(ImGuiKey_E)) {
 		ImGuiIO& io = ImGui::GetIO();
 		aPtr->cameraAngle += swap(aPtr->mouseSensitivity * io.MouseDelta);
 		if (aPtr->cameraAngle.x > glm::radians(90.0f))  aPtr->cameraAngle.x = glm::radians(90.0f);
@@ -133,17 +130,16 @@ inline void render() {
 
 	aPtr->cameraPos.x += -(aPtr->cosa * keyVec.x + aPtr->sina * keyVec.y);
 	aPtr->cameraPos.z += (aPtr->cosa * keyVec.y - aPtr->sina * keyVec.x);
-
-	ImGuiIO& io = ImGui::GetIO();
-	aPtr->orbit = aPtr->orbit * glm::eulerAngleY(aPtr->mouseSensitivity * io.MouseDelta.x);
-	aPtr->orbit = glm::eulerAngleX(-aPtr->mouseSensitivity * io.MouseDelta.y) * aPtr->orbit;
+	if (ImGui::IsKeyDown(ImGuiKey_R)) {
+		ImGuiIO& io = ImGui::GetIO();
+		aPtr->orbit = aPtr->orbit * glm::eulerAngleY(aPtr->mouseSensitivity * io.MouseDelta.x);
+		aPtr->orbit = glm::eulerAngleX(aPtr->mouseSensitivity * io.MouseDelta.y) * aPtr->orbit;
+	}
 
 	glm::mat4 model = glm::translate(aPtr->orbit, aPtr->cratePos);
 
 	// Viewport Rendering
 	aPtr->viewport.bind();
-
-	GL_ERROR(glViewport(0, 0, aPtr->viewport.width, aPtr->viewport.height));
 
 	aPtr->viewport.clear(); 
 
@@ -167,6 +163,7 @@ inline void render() {
 	//Frame Input from Events
 	// ImGui Rendering
 
+
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
@@ -180,6 +177,7 @@ inline void render() {
 	ImGui::Render();
 
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	
 
 	aPtr->window.swapBuffers();
 	aPtr->window.clearBuffer();

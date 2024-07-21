@@ -65,9 +65,9 @@ public:
 	App(HINSTANCE hInstance, int nCmdShow) :
 		instance(hInstance),
 		ap(this),
-		window(hInstance, nCmdShow, L"OpenGL Sandbox", winProc, 1.5, 0.85),
-		viewport(window.getWindowWidth() - 300, window.getWindowHeight() - 300),
-		meshFile(L"res/Meshes/Cable Reel(binary).stl"),
+		window(hInstance, nCmdShow, L"OpenGL Sandbox", winProc, 1.5, 0.9),
+		viewport(window.getWindowWidth(), window.getWindowHeight()),
+		meshFile(L"res/Meshes/Cable Reel High Res.stl"),
 		mesh((float*)meshFile.vertices.data(), meshFile.vertices.size(), StlVertexAttribSizes, 2, sizeof(StlVertex))
 	{
 		if (
@@ -83,7 +83,8 @@ public:
 		}
 
 		stlShdr.bind();
-		window.show(); 
+
+		window.showMaximized(); 
 	}
 	
 	bool getAppStatus() { return appStatus; }

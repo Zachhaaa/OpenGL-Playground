@@ -19,9 +19,6 @@ LRESULT CALLBACK winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
-	case WM_SIZE:
-		windowResize(lParam);           
-		return 0;
 	case WM_KEYDOWN:
 		if (wParam == VK_ESCAPE) PostQuitMessage(0);
 		return 0;

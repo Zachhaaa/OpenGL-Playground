@@ -35,6 +35,7 @@ namespace Man {
 		Window(HINSTANCE hInstance, int nCmdShow, const wchar_t* windowTitle, WNDPROC winProc, float aspectRatio, float percentSize);
 
 		void show() { ShowWindow(hwnd, nCmdShow); }
+		void showMaximized() { ShowWindow(hwnd, SW_MAXIMIZE); }
 		/// @return true = success, false = fail
 		bool getWindowStatus() { return windowStatus; }
 		void swapBuffers() { SwapBuffers(dc); }
