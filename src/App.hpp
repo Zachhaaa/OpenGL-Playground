@@ -56,12 +56,12 @@ public:
 	// TODO: try messing up the winding order
 	// BOOKMARK: fix the winding order (Run the program)
 	unsigned skyboxIndices[36] = {
-		0, 1, 2, 1, 3, 2, // front
-		2, 3, 6, 6, 3, 6, // top
-		3, 1, 7, 7, 1, 5, // right
-		0, 2, 4, 4, 2, 6, // left
-		1, 0, 4, 4, 5, 1, // bottom
-		5, 4, 6, 5, 6, 7, // back
+		0, 2, 1, 1, 2, 3, // front
+		2, 6, 3, 3, 6, 7, // top
+		1, 3, 7, 7, 5, 1, // right
+		2, 0, 4, 4, 6, 2, // left
+		0, 1, 4, 4, 1, 5, // bottom
+		4, 5, 6, 6, 5, 7, // back
 	};
 
 	STL meshFile;
@@ -75,7 +75,7 @@ public:
 	StlShader stlShdr; 
 	SkyboxShader skyboxShdr;
 
-	glm::vec3 cameraPos = { 0.0f, -1.0f, -10.0f };
+	glm::vec3 cameraPos = { 0.0f, 0.0f, -10.0f };
 	glm::vec2 cameraAngle = { 0.0f, 0.0f };
 	glm::vec3 g_LightCol = { 1.0f, 1.0f, 1.0f };
 	glm::vec3 g_LightPos = { 20.0f, 20.0f, 30.0f };

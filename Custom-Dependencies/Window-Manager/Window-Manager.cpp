@@ -101,6 +101,7 @@ Man::Window::Window(HINSTANCE hInstance, int nCmdShow, const wchar_t* windowTitl
 	GL_ERROR(glCullFace(GL_BACK));
 	GL_ERROR(glFrontFace(GL_CCW));
 	GL_ERROR(glEnable(GL_DEPTH_TEST));
+	GL_ERROR(glDepthFunc(GL_LEQUAL));
 	GL_ERROR(glClearColor(0.0f, 0.0f, 0.0f, 0.1f));
 
 	IMGUI_CHECKVERSION();

@@ -15,7 +15,6 @@ inline void MyImGui() {
 		ImGui::Text("FPS: %f", io.Framerate);
 		ImGui::Text("CameraPos: (%f, %f, %f)", aPtr->cameraPos.x, aPtr->cameraPos.y, aPtr->cameraPos.z);
 		ImGui::Text("CameraAngle: (%f, %f)", aPtr->cameraAngle.x, aPtr->cameraAngle.y);
-		ImGui::Text("Viewport size: (%i, %i)", aPtr->viewport.getWidth(), aPtr->viewport.getWidth());
 
 		ImGui::ColorPicker3("Light Color", (float*)&aPtr->g_LightCol);
 		ImGui::SliderFloat3("Light Position", (float*)&aPtr->g_LightPos, -10.0f, 10.0f);
@@ -90,13 +89,14 @@ inline void MyImGui() {
 		aPtr->stlShdr.proj(proj);
 
 		aPtr->skyboxShdr.bind();
+		// Right now you are setting the w term which is wrong, the z should be set to 1 by the time gl_Position is set. 
 		aPtr->skyboxShdr.proj(proj);
 		
 		ImGui::Image(
 			(void*)(intptr_t)aPtr->viewport.getTexID(),
 			windowSize, 
-			ImVec2(0, 1), 
-			ImVec2(1, 0)
+			ImVec2(0.0, 1.0), 
+			ImVec2(1.0, 0.0)
 		);
 	}
 	ImGui::End(); 
@@ -127,7 +127,7 @@ inline void render() {
 	// Possible reasons.
 	//  1. Poopoo computer(try on my desktop with a mouse).
 	//  2. No clue as to why this is happening. 
-	if (ImGui::IsKeyDown(ImGuiKey_E)) {
+	if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) {
 		ImGuiIO& io = ImGui::GetIO();
 		aPtr->cameraAngle += swap(aPtr->mouseSensitivity * io.MouseDelta);
 		if (aPtr->cameraAngle.x > glm::radians(90.0f))  aPtr->cameraAngle.x = glm::radians(90.0f);
@@ -138,7 +138,7 @@ inline void render() {
 
 	aPtr->cameraPos.x += -(aPtr->cosa * keyVec.x + aPtr->sina * keyVec.y);
 	aPtr->cameraPos.z += (aPtr->cosa * keyVec.y - aPtr->sina * keyVec.x);
-	if (ImGui::IsKeyDown(ImGuiKey_R)) {
+	if (ImGui::IsKeyDown(ImGuiKey_LeftAlt)) {
 		ImGuiIO& io = ImGui::GetIO();
 		aPtr->orbit = aPtr->orbit * glm::eulerAngleY(aPtr->mouseSensitivity * io.MouseDelta.x);
 		aPtr->orbit = glm::eulerAngleX(aPtr->mouseSensitivity * io.MouseDelta.y) * aPtr->orbit;
@@ -169,7 +169,9 @@ inline void render() {
 	aPtr->mesh.render();
 	
 	aPtr->skyboxShdr.bind();
-
+	view[3][0] = 0.0f;
+	view[3][1] = 0.0f;
+	view[3][2] = 0.0f;
 	aPtr->skyboxShdr.view(view);
 
 	aPtr->skyBox.bind();

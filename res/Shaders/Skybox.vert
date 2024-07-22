@@ -8,5 +8,6 @@ uniform mat4 view, proj;
 
 void main() {
 	CubeTexCoords = aPos; 
-	gl_Position = proj * view * (5.0 * vec4(aPos, 1.0)); 
+	vec4 pos = proj * view * vec4(aPos, 1.0);
+	gl_Position = pos.xyww;
 }
