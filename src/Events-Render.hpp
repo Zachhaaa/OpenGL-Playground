@@ -86,7 +86,12 @@ inline void MyImGui() {
 			c_NearClippingDistance,
 			c_FarClippingDistance
 		);
+		aPtr->stlShdr.bind();
 		aPtr->stlShdr.proj(proj);
+
+		aPtr->skyboxShdr.bind();
+		aPtr->skyboxShdr.proj(proj);
+		
 		ImGui::Image(
 			(void*)(intptr_t)aPtr->viewport.getTexID(),
 			windowSize, 
@@ -118,7 +123,10 @@ inline void render() {
 	if (ImGui::IsKeyDown(ImGuiKey_Space)) aPtr->cameraPos.y += -posDiff;
 	if (ImGui::IsKeyDown(ImGuiKey_LeftShift)) aPtr->cameraPos.y += posDiff;
 
-
+	// TODO BUG: fix the bug where the cursor fails to respond to the track pad after pressing E or R and the cursor is not already moving.
+	// Possible reasons.
+	//  1. Poopoo computer(try on my desktop with a mouse).
+	//  2. No clue as to why this is happening. 
 	if (ImGui::IsKeyDown(ImGuiKey_E)) {
 		ImGuiIO& io = ImGui::GetIO();
 		aPtr->cameraAngle += swap(aPtr->mouseSensitivity * io.MouseDelta);
@@ -141,6 +149,7 @@ inline void render() {
 	// Viewport Rendering
 	aPtr->viewport.bind();
 
+	aPtr->stlShdr.bind(); 
 	aPtr->viewport.clear(); 
 
 	aPtr->stlShdr.model(model);
@@ -156,7 +165,15 @@ inline void render() {
 	aPtr->stlShdr.materialSpecular(aPtr->crate.Mspecular);
 	aPtr->stlShdr.materialShininess(aPtr->crate.Mshininess); 
 
+	aPtr->mesh.bind(); 
 	aPtr->mesh.render();
+	
+	aPtr->skyboxShdr.bind();
+
+	aPtr->skyboxShdr.view(view);
+
+	aPtr->skyBox.bind();
+	aPtr->skyBox.renderIndex();
 
 	aPtr->viewport.unbind();
 

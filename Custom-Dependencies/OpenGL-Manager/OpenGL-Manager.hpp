@@ -22,10 +22,12 @@ namespace Man {
 		GLsizei m_NumVertices;
 		GLsizei vertexSize;
 	public:
-		Geometry(float *vertexData, GLsizei m_NumVertices, int attribSizes[], unsigned numAttribs, unsigned vertexSize);
+		Geometry(float *vertexData, GLsizei m_NumVertices, int attribSizes[], unsigned numAttribs, unsigned vertexSize, 
+			unsigned *indexData = nullptr, unsigned indexDataSize = 0);
 		void bind() { GL_ERROR(glBindVertexArray(vertexArray)); }
 		/// requires the buffer/arrays to be bound (use .bind()).
 		void render() { GL_ERROR(glDrawArrays(GL_TRIANGLES, 0, m_NumVertices)); }
+		void renderIndex() { GL_ERROR(glDrawElements(GL_TRIANGLES, m_NumVertices, GL_UNSIGNED_INT, 0)); }
 		/// Does not require the buffer to be bound.
 		void subData(float *data, GLintptr offset, GLsizeiptr size) { GL_ERROR(glNamedBufferSubData(bufferID, offset, size, data)); }
 		/// Does not require the buffer to be bound.
@@ -50,6 +52,9 @@ namespace Man {
 		GLint *uniLocs = nullptr;
 
 		void createTexture(const char* file, GLenum textureSlot, GLint wrapMethod);
+		/// @param pathToImages folder that contains images with names front, back, left, right, top, and bottom.
+		/// @param fileType must include the dot ex: ".png"
+		void createCubeMap(const char* pathToImages, const char* fileType, GLenum textureSlot);
 
 	public: 
 		void createProgram(const wchar_t* vertexShaderFile, const wchar_t* fragmentShaderFile, const char* uniformNames[], unsigned namesSize);

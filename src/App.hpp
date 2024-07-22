@@ -17,7 +17,6 @@ struct Material {
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-
 LRESULT CALLBACK winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 class AppPtr {
@@ -33,6 +32,7 @@ public:
 	AppPtr ap;
 	Man::Window window;
 
+	// TODO: abstract all of this into one massive opengl class where all of this can be easily managed
 	Man::FrameBuffer viewport;
 	
 	int swapInterval = -1;
@@ -41,14 +41,39 @@ public:
 	float moveSpeed = 0.005;
 	float mouseSensitivity = 0.0035;
 
+	int skyBoxAttribSizes[1] = { 3 };
+
+	float skyBoxVerts[24] = {
+		-1.0f, -1.0f,   1.0f, // 0 bottom   left    front
+		 1.0f,  -1.0f,  1.0f, // 1 bottom   right   front
+		-1.0f,  1.0f,   1.0f, // 2 top      left    front
+		 1.0f,  1.0f,   1.0f, // 3 top      right   front
+		-1.0f, -1.0f,  -1.0f, // 4 bottom   left    back
+		 1.0f,  -1.0f, -1.0f, // 5 bottom   right   back
+		-1.0f,  1.0f,  -1.0f, // 6 top      left    back
+		 1.0f,  1.0f,  -1.0f  // 7 top      right   back
+	};
+	// TODO: try messing up the winding order
+	// BOOKMARK: fix the winding order (Run the program)
+	unsigned skyboxIndices[36] = {
+		0, 1, 2, 1, 3, 2, // front
+		2, 3, 6, 6, 3, 6, // top
+		3, 1, 7, 7, 1, 5, // right
+		0, 2, 4, 4, 2, 6, // left
+		1, 0, 4, 4, 5, 1, // bottom
+		5, 4, 6, 5, 6, 7, // back
+	};
+
 	STL meshFile;
 	STL smoothedMesh;
 
+	Man::Geometry skyBox;
 	Man::Geometry mesh;
 	float smoothCutoffAngle = 0.0f;
 	float prevSmoothCutoffAngle = 0.0f;
 	
 	StlShader stlShdr; 
+	SkyboxShader skyboxShdr;
 
 	glm::vec3 cameraPos = { 0.0f, -1.0f, -10.0f };
 	glm::vec2 cameraAngle = { 0.0f, 0.0f };
@@ -68,21 +93,21 @@ public:
 		window(hInstance, nCmdShow, L"OpenGL Sandbox", winProc, 1.5, 0.9),
 		viewport(window.getWindowWidth(), window.getWindowHeight()),
 		meshFile(L"res/Meshes/Cable Reel High Res.stl"),
+		skyBox(skyBoxVerts, 36, skyBoxAttribSizes, 1, 3 * sizeof(float), skyboxIndices, sizeof(skyboxIndices)),
 		mesh((float*)meshFile.vertices.data(), meshFile.vertices.size(), StlVertexAttribSizes, 2, sizeof(StlVertex))
 	{
 		if (
 			!window.getWindowStatus() ||
 			!stlShdr.getShaderStatus() ||
 			!viewport.getStatus()
-			) {
+			) 
+		{
 			appStatus = false;
 			return;
 		}
 		else {
 			appStatus = true;
 		}
-
-		stlShdr.bind();
 
 		window.showMaximized(); 
 	}

@@ -202,7 +202,11 @@ namespace My {
 		return a.x * b.x + a.y * b.y + a.z * b.z;
 	}
 }
-
+// TODO: optimize the following function even more
+// ideas:
+//  1. keep a list of what vertices have the same position
+//  2. maybe multithread that?
+//  3. maybe even a compute shader?
 void STL::visualSmooth(float cutoffAngle) { 
 	std::vector<long long> vertNormalMap;
 	vertNormalMap.reserve(vertices.size());
