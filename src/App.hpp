@@ -27,6 +27,8 @@ public:
 class App {
 	bool appStatus = false;
 public: 
+
+	// TODO: make a defaults reader and allow the default values to be changed at runtime.
 	HINSTANCE instance;
 
 	AppPtr ap;
@@ -53,8 +55,6 @@ public:
 		-1.0f,  1.0f,  -1.0f, // 6 top      left    back
 		 1.0f,  1.0f,  -1.0f  // 7 top      right   back
 	};
-	// TODO: try messing up the winding order
-	// BOOKMARK: fix the winding order (Run the program)
 	unsigned skyboxIndices[36] = {
 		0, 2, 1, 1, 2, 3, // front
 		2, 6, 3, 3, 6, 7, // top
@@ -92,7 +92,8 @@ public:
 		ap(this),
 		window(hInstance, nCmdShow, L"OpenGL Sandbox", winProc, 1.5, 0.9),
 		viewport(window.getWindowWidth(), window.getWindowHeight()),
-		meshFile(L"res/Meshes/Cable Reel High Res.stl"),
+		// TODO make this loadable at runtime. Use file explorer
+		meshFile(L"res/Meshes/Cable Reel(Binary).stl"),
 		skyBox(skyBoxVerts, 36, skyBoxAttribSizes, 1, 3 * sizeof(float), skyboxIndices, sizeof(skyboxIndices)),
 		mesh((float*)meshFile.vertices.data(), meshFile.vertices.size(), StlVertexAttribSizes, 2, sizeof(StlVertex))
 	{
@@ -108,6 +109,7 @@ public:
 		else {
 			appStatus = true;
 		}
+
 
 		window.showMaximized(); 
 	}

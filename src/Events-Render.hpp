@@ -9,16 +9,17 @@
 
 inline void MyImGui() {
 	ImGui::SetNextWindowSize(ImVec2(600, 600), ImGuiCond_Once);
-	
+
 	if (ImGui::Begin("Debug Menu")) {
 		ImGuiIO& io = ImGui::GetIO();
 		ImGui::Text("FPS: %f", io.Framerate);
 		ImGui::Text("CameraPos: (%f, %f, %f)", aPtr->cameraPos.x, aPtr->cameraPos.y, aPtr->cameraPos.z);
 		ImGui::Text("CameraAngle: (%f, %f)", aPtr->cameraAngle.x, aPtr->cameraAngle.y);
 
-		ImGui::ColorPicker3("Light Color", (float*)&aPtr->g_LightCol);
+		ImGui::ColorEdit3("Light Color", (float*)&aPtr->g_LightCol);
 		ImGui::SliderFloat3("Light Position", (float*)&aPtr->g_LightPos, -10.0f, 10.0f);
 		ImGui::Text("Object Settings");
+		ImGui::ColorEdit3("Object Color", (float*)&aPtr->crate.Mcolor);
 		ImGui::SliderFloat("Ambient", &aPtr->crate.Mambient, 0.0f, 1.0f);
 		ImGui::SliderFloat("Diffuse", &aPtr->crate.Mdiffuse, 0.0f, 1.0f);
 		ImGui::SliderFloat("Specular", &aPtr->crate.Mspecular, 0.0f, 1.0f);
@@ -60,7 +61,7 @@ inline void MyImGui() {
 		}
 	}
 	ImGui::End();
-	
+
 
 	ImGui::SetNextWindowSize(ImVec2(600, 600), ImGuiCond_Once);
 
@@ -71,6 +72,8 @@ inline void MyImGui() {
 		ImGui::Text("Cutoof Angle Smooth     %f", timers.cutoffAngleSmooth);
 		ImGui::Text("Cutoof Angle SubData    %f", timers.cutoffAngleSubData);
 		ImGui::Text("Clear Buffer Time       %f", timers.clearBufferTime);
+		ImGui::Button("Grouped Button");
+		ImGui::Text("Grouped Texted");
 	}
 	ImGui::End();
 
@@ -101,6 +104,15 @@ inline void MyImGui() {
 	}
 	ImGui::End(); 
 	
+	//if (ImGui::Begin("Primitives")) {
+	//	ImGui::SliderFloat2("PrimPosition", (float*)&aPtr->PrimPosition, 0, 2000, "%.0f"); 
+	//}
+	//ImGui::End();
+	//ImDrawList* drawLst = ImGui::GetForegroundDrawList(); 
+	//drawLst->AddText(aPtr->PrimPosition, IM_COL32(255, 0, 0, 255), "I cant find the text here please help");
+	//drawLst->AddCircleFilled(ImVec2(500, 500), 20, IM_COL32(255, 0, 255, 200));
+	//drawLst->AddLine(ImVec2(100, 100), ImVec2(1100, 400), IM_COL32(255, 0, 255, 255), 5.0);
+		
 
 }
 glm::vec2 operator*(float c, ImVec2& a) { return glm::vec2(c * a.x, c * a.y); }
@@ -127,7 +139,7 @@ inline void render() {
 	// Possible reasons.
 	//  1. Poopoo computer(try on my desktop with a mouse).
 	//  2. No clue as to why this is happening. 
-	if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) {
+	if (ImGui::IsKeyDown(ImGuiKey_C)) {
 		ImGuiIO& io = ImGui::GetIO();
 		aPtr->cameraAngle += swap(aPtr->mouseSensitivity * io.MouseDelta);
 		if (aPtr->cameraAngle.x > glm::radians(90.0f))  aPtr->cameraAngle.x = glm::radians(90.0f);
@@ -138,7 +150,7 @@ inline void render() {
 
 	aPtr->cameraPos.x += -(aPtr->cosa * keyVec.x + aPtr->sina * keyVec.y);
 	aPtr->cameraPos.z += (aPtr->cosa * keyVec.y - aPtr->sina * keyVec.x);
-	if (ImGui::IsKeyDown(ImGuiKey_LeftAlt)) {
+	if (ImGui::IsKeyDown(ImGuiKey_R)) {
 		ImGuiIO& io = ImGui::GetIO();
 		aPtr->orbit = aPtr->orbit * glm::eulerAngleY(aPtr->mouseSensitivity * io.MouseDelta.x);
 		aPtr->orbit = glm::eulerAngleX(aPtr->mouseSensitivity * io.MouseDelta.y) * aPtr->orbit;

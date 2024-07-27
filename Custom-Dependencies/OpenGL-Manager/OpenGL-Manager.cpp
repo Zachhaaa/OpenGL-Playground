@@ -227,4 +227,5 @@ Man::FrameBuffer::FrameBuffer(int widthIn, int heightIn) : width(widthIn), heigh
 		__debugbreak();
 		return;
 	} 
+	GL_ERROR(glViewport(0, 0, width, height));
 }
