@@ -26,10 +26,7 @@ namespace Man {
 			unsigned *indexData = nullptr, unsigned indexDataSize = 0);
 		void bind() { GL_ERROR(glBindVertexArray(vertexArray)); }
 		/// requires the buffer/arrays to be bound (use .bind()).
-		void render() { 
-			// TODO: try renderign different primitives
-			GL_ERROR(glDrawArrays(GL_TRIANGLES, 0, m_NumVertices));
-		}
+		void render() { GL_ERROR(glDrawArrays(GL_TRIANGLES, 0, m_NumVertices)); }
 		void renderIndex() { GL_ERROR(glDrawElements(GL_TRIANGLES, m_NumVertices, GL_UNSIGNED_INT, 0)); }
 		/// Does not require the buffer to be bound.
 		void subData(float *data, GLintptr offset, GLsizeiptr size) { GL_ERROR(glNamedBufferSubData(bufferID, offset, size, data)); }

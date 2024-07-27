@@ -110,7 +110,6 @@ public:
 			appStatus = true;
 		}
 
-
 		window.showMaximized(); 
 	}
 	

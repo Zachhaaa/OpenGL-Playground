@@ -212,5 +212,4 @@ inline void render() {
 
 	aPtr->window.swapBuffers();
 	aPtr->window.clearBuffer();
-
 }
