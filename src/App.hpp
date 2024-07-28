@@ -27,14 +27,11 @@ public:
 class App {
 	bool appStatus = false;
 public: 
-
-	// TODO: make a defaults reader and allow the default values to be changed at runtime.
 	HINSTANCE instance;
 
 	AppPtr ap;
 	Man::Window window;
 
-	// TODO: abstract all of this into one massive opengl class where all of this can be easily managed
 	Man::FrameBuffer viewport;
 	
 	int swapInterval = -1;
@@ -92,7 +89,6 @@ public:
 		ap(this),
 		window(hInstance, nCmdShow, L"OpenGL Sandbox", winProc, 1.5, 0.9),
 		viewport(window.getWindowWidth(), window.getWindowHeight()),
-		// TODO make this loadable at runtime. Use file explorer
 		meshFile(L"res/Meshes/Cable Reel(Binary).stl"),
 		skyBox(skyBoxVerts, 36, skyBoxAttribSizes, 1, 3 * sizeof(float), skyboxIndices, sizeof(skyboxIndices)),
 		mesh((float*)meshFile.vertices.data(), meshFile.vertices.size(), StlVertexAttribSizes, 2, sizeof(StlVertex))

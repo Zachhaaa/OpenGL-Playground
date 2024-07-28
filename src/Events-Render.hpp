@@ -7,6 +7,8 @@
 
 #include <Timers.hpp>
 
+inline ImVec2 operator+(const ImVec2& a, const ImVec2& b) { return ImVec2(a.x + b.x, a.y + b.y); }
+
 inline void MyImGui() {
 	ImGui::SetNextWindowSize(ImVec2(600, 600), ImGuiCond_Once);
 
@@ -79,9 +81,11 @@ inline void MyImGui() {
 
 	if (ImGui::Begin("Viewport")) {
 		ImVec2 windowSize = ImGui::GetWindowSize();
-		// TODO: Figure out how to accurately subtract the size of the title bar.
-		windowSize.x -= 20;
-		windowSize.y -= 45; 
+		float titleBarHeight = ImGui::GetFrameHeight();
+		windowSize.y -= titleBarHeight;
+		ImVec2 viewportPos = ImGui::GetWindowPos();
+		viewportPos.y += titleBarHeight;
+
 		glm::mat4 proj = glm::perspective(
 			glm::radians(c_DefaultFOV),
 			windowSize.x / windowSize.y,
@@ -95,11 +99,14 @@ inline void MyImGui() {
 		// Right now you are setting the w term which is wrong, the z should be set to 1 by the time gl_Position is set. 
 		aPtr->skyboxShdr.proj(proj);
 		
-		ImGui::Image(
+
+		ImDrawList* drawLst = ImGui::GetForegroundDrawList();
+		drawLst->AddImage(
 			(void*)(intptr_t)aPtr->viewport.getTexID(),
-			windowSize, 
-			ImVec2(0.0, 1.0), 
-			ImVec2(1.0, 0.0)
+			viewportPos,
+			viewportPos + windowSize,
+			ImVec2(0, 1),
+			ImVec2(1, 0)
 		);
 	}
 	ImGui::End(); 
