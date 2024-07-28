@@ -100,7 +100,7 @@ inline void MyImGui() {
 		aPtr->skyboxShdr.proj(proj);
 		
 
-		ImDrawList* drawLst = ImGui::GetForegroundDrawList();
+		ImDrawList* drawLst = ImGui::GetWindowDrawList();
 		drawLst->AddImage(
 			(void*)(intptr_t)aPtr->viewport.getTexID(),
 			viewportPos,

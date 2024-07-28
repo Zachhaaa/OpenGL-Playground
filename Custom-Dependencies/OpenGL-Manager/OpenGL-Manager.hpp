@@ -57,7 +57,7 @@ namespace Man {
 		void createCubeMap(const char* pathToImages, const char* fileType, GLenum textureSlot);
 
 	public: 
-		void createProgram(const wchar_t* vertexShaderFile, const wchar_t* fragmentShaderFile, const char* uniformNames[], unsigned namesSize);
+		void createProgram(const wchar_t* vertexShaderFile, const wchar_t* fragmentShaderFile, const wchar_t* geometryShaderFile, const char* uniformNames[], unsigned namesSize);
 
 		void bind() { GL_ERROR(glUseProgram(shdrID)); }
 		bool getShaderStatus() { return shaderStatus; }

@@ -213,14 +213,11 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="src\Shader-Programs.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="Custom-Dependencies\Performance-Timer\Timers.hpp">
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="src\Shader-Programs.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

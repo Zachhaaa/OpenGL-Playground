@@ -170,7 +170,7 @@ void Man::ShaderProgram::createCubeMap(const char* pathToImages, const char* fil
 	delete[] filePath;
 }
 
-void Man::ShaderProgram::createProgram(const wchar_t* vertexShaderFile, const wchar_t* fragmentShaderFile, const char* uniformNames[], unsigned namesSize)
+void Man::ShaderProgram::createProgram(const wchar_t* vertexShaderFile, const wchar_t* fragmentShaderFile, const wchar_t* geometryShaderFile, const char* uniformNames[], unsigned namesSize)
 {
 	uniLocs = new GLint[namesSize];
 
@@ -179,6 +179,8 @@ void Man::ShaderProgram::createProgram(const wchar_t* vertexShaderFile, const wc
 	if (!shaderStatus) return;
 	createShader(GL_FRAGMENT_SHADER, fragmentShaderFile);
 	if (!shaderStatus) return;
+	if (geometryShaderFile != nullptr)
+		createShader(GL_GEOMETRY_SHADER, geometryShaderFile);
 
 	GL_ERROR(glLinkProgram(shdrID));
 	GLint success;

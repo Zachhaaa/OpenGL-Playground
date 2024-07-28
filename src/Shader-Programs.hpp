@@ -25,6 +25,7 @@ public:
 		createProgram(
 			L"res/Shaders/Object-Shader.vert", 
 			L"res/Shaders/Object-Shader.frag", 
+			nullptr,
 			uniNames, 
 			sizeof(uniNames) / sizeof(char*)
 		);
@@ -65,6 +66,7 @@ public:
 		createProgram(
 			L"res/Shaders/Light-Shader.vert", 
 			L"res/Shaders/Light-Shader.frag", 
+			nullptr,
 			uniNames, 
 			sizeof(uniNames) / sizeof(char*)
 		);
@@ -95,6 +97,7 @@ public:
 		createProgram(
 			L"res/Shaders/STL-Shader.vert", 
 			L"res/Shaders/STL-Shader.frag",
+			nullptr,
 			uniNames,
 			sizeof(uniNames) / sizeof(char*)
 		);
@@ -123,6 +126,7 @@ public:
 		createProgram(
 			L"res/Shaders/Outline.vert",
 			L"res/Shaders/Outline.frag",
+			nullptr,
 			uniNames,
 			sizeof(uniNames) / sizeof(char*)
 		);
@@ -144,6 +148,7 @@ public:
 		createProgram(
 			L"res/Shaders/Skybox.vert",
 			L"res/Shaders/Skybox.frag",
+			nullptr,
 			uniNames,
 			sizeof(uniNames) / sizeof(char*)
 		);
